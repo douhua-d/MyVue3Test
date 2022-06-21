@@ -1,15 +1,24 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <!--  <img alt="Vue logo" src="./assets/logo.png">-->
+  <!--  <HelloWorld msg="Welcome to Your Vue.js App"/>-->
+  <!--  <Test/>Q-->
+  <!--  <TwoColumnsLayout />-->
+  <ThreeColumnsLayout />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+// import HelloWorld from './components/HelloWorld.vue'
+// import Test from "./components/Test";
+import TwoColumnsLayout from "@/TwoColumnsLayout";
+import ThreeColumnsLayout from "@/ThreeColumnsLayout";
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    TwoColumnsLayout,
+    ThreeColumnsLayout
+    // Test
+    // HelloWorld
   }
 }
 </script>
