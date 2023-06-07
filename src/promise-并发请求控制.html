@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+  const PENDING = 'pending'
+  const FULFILLED = 'fulfilled'
+  const REJECTED = 'rejected'
+  function PromiseA(executor) {
+    let _this = this
+    this.status = PENDING
+    this.value = undefined
+    this.reason = undefined
+    this.onFulFilled = []
+    this.onRejected = []
+    function resolve(value) {
+      if (_this.status === PENDING) {
+        _this.value = value
+        _this.status = FULFILLED
+        _this.onFulFilled.forEach(fn => fn(_this.value))
+      }
+    }
+    function reject(reason) {
+      if (_this.status === PENDING) {
+        _this.status = REJECTED
+        _this.reason = reason
+        _this.onRejected.forEach(fn => fn(_this.reason))
+      }
+    }
+
+    try {
+      executor(resolve, reject)
+    } catch (e) {
+      reject(e)
+    }
+  }
+
+  //   function resolvePromise(promise2, x, resolve, reject){
+  //     if(promise2 === x){
+  //         reject(new TypeError('Chaining cycle'))
+  //     }
+  //     if(x && typeof x === 'object' || typeof x === 'function'){
+  //         let used;
+  //         try {
+  //             let then = x.then
+  //             if(typeof then === 'function'){
+  //                 then.call(x, (y)=>{
+  //                     if (used) return;
+  //                     used = true
+  //                     resolvePromise(promise2, y, resolve, reject)
+  //                 }, (r) =>{
+  //                     if (used) return;
+  //                     used = true
+  //                     reject(r)
+  //                 })
+  //             } else {
+  //                 if (used) return;
+  //                 used = true
+  //                 resolve(x)
+  //             }
+  //         } catch(e){
+  //             if (used) return;
+  //             used = true
+  //             reject(e)
+  //         }
+  //     } else {
+  //         resolve(x)
+  //     }
+  // }
+  function resolvePromise(promise2, x, resolve, reject) {
+    if (x !== null && (typeof x === 'object')) {
+      if (x.__proto__ === PromiseA.prototype) {
+        return x.then(v => resolvePromise(promise2, v, resolve, reject), err => reject(err))
+      } else {
+        resolve(x)
+      }
+    } else {
+      resolve(x)
+    }
+  }
+  PromiseA.prototype.then = function (onFulFilled, onRejected) {
+    let _this = this;
+    let OnFulfilled = typeof onFulFilled === 'function' ? onFulFilled : value => value
+    let OnRejected = typeof onRejected === 'function' ? onRejected : reason => { throw reason }
+    let newPromiseA = new PromiseA((resolve, reject) => {
+      if (_this.status === FULFILLED) {
+        queueMicrotask(() => {
+          let x = OnFulfilled(_this.value)
+          resolve(x)
+        })
+      } else if (_this.status === REJECTED) {
+        queueMicrotask(() => {
+          let x = OnRejected(_this.reason)
+          reject(x)
+        })
+      } else if (_this.status === PENDING) {
+        _this.onFulFilled.push(() => {
+          queueMicrotask(() => {
+            try {
+              let x = OnFulfilled(_this.value)
+              //返回值是promise
+              resolvePromise(newPromiseA, x, resolve, reject)
+            } catch (e) {
+              reject(e)
+            }
+          })
+        })
+        _this.onRejected.push(() => {
+          queueMicrotask(() => {
+            try {
+              let x = OnRejected(_this.reason)
+              resolvePromise(newPromiseA, x, resolve, reject)
+            } catch (e) {
+              reject(e)
+            }
+          })
+        })
+      }
+    })
+    return newPromiseA
+  }
+  PromiseA.prototype.constructor.All = (arr) => {
+    return new PromiseA(((resolve, reject) => {
+      let list = arr;
+      let isComplete = false;
+      let result = new Array(arr.length).fill(undefined)
+      list.forEach((item, index) => {
+        item.then((value) => {
+          if (isComplete) {
+            return
+          }
+          result[index] = value
+          if (result.every(i => i !== undefined)) {
+            resolve(Object.values(result))
+          }
+        }, (e) => {
+          if (isComplete) {
+            return
+          }
+          isComplete = true
+          reject(e)
+        })
+      })
+    }))
+  }
+  PromiseA.prototype.constructor.any = (arr) => {
+    return new PromiseA(((resolve, reject) => {
+      let list = arr;
+      let isComplete = false;
+      let failed = new Array(arr.length).fill(undefined)
+      list.forEach((item, index) => {
+        item.then((value) => {
+          if (isComplete) {
+            return
+          }
+          isComplete = true
+          resolve(value)
+        })
+      }, (err) => {
+        if (isComplete) {
+          return
+        }
+        failed[index] = err
+        if (result.every(i => i !== undefined)) {
+          reject(Object.values(failed))
+        }
+      })
+    }))
+  }
+  PromiseA.prototype.constructor.race = (arr) => {
+    return new PromiseA(((resolve, reject) => {
+      let list = arr;
+      let isComplete = false;
+      list.forEach((item, index) => {
+        item.then((value) => {
+          if (isComplete) {
+            return
+          }
+          isComplete = true
+          resolve(value)
+        }, (err) => {
+          if (isComplete) {
+            return
+          }
+          isComplete = true
+          reject(err)
+        })
+      })
+    }))
+  }
+
+  PromiseA.prototype.constructor.allSettled = (arr) => {
+    return new PromiseA(((resolve, reject) => {
+      let list = arr;
+      let isComplete = false;
+      let result = new Array(arr.length).fill(undefined)
+      list.forEach((item, index) => {
+        item.then((value) => {
+          result[index] = value
+          if (result.every(i => i !== undefined)) {
+            resolve(Object.values(result))
+          }
+
+        }, (err) => {
+          result[index] = err
+          if (result.every(i => i !== undefined)) {
+            resolve(Object.values(result))
+          }
+        })
+
+      })
+    }))
+  }
+
+  function PromiseAPool(arr, limit, retry) {
+    //进程池
+    this.pool = Array.from(arr|| [])
+    //执行队列
+    this.executorList = []
+    //失败队列
+    this.failedList = []
+    //并发数
+    this.limit = limit || 3
+    this.status = 'pending'
+    //重试次数
+    this.retry = retry || 1
+    //结果列表
+    this.resultList = []
+    let _this = this;
+    
+    //执行者
+    this.scoped = function(resolve) {
+      if((_this.pool.length === 0 && _this.executorList.length === 0)) {
+        //清空队列停止执行
+        if(_this.failedList.length === 0){
+          _this.status = 'end';
+          resolve()
+          return
+        }else{
+          _this.retry --;
+          //重试
+          _this.pool = _this.failedList
+          _this.failedList = []
+        }
+      }
+      //暂停时终止执行
+      if(_this.status === 'stoped'){
+        return
+      }
+      if(_this.executorList.length < _this.limit && _this.pool.length>0){
+        let pormiseItem = _this.pool[_this.pool.length-1];
+        //移出进程池子
+        _this.pool.splice(_this.pool.indexOf(pormiseItem),1)
+        let thread = pormiseItem().then(res => {
+            //移出执行队列
+            _this.executorList.splice(_this.executorList.indexOf(thread),1)
+            //尝试推入下一个
+            _this.scoped(resolve)
+            //记录成功信息
+            _this.resultList.push({
+              item: pormiseItem,
+              status: 'success',
+              value: res
+            })
+          }, e => {
+            //移出执行队列
+            _this.executorList.splice(_this.executorList.indexOf(thread),1)
+            //推入失败队列
+            if(_this.retry > 0){
+              _this.failedList.push(pormiseItem)
+            }else{
+              //记录失败信息
+              _this.resultList.push({
+                item: pormiseItem,
+                status: 'failed',
+                error: e
+              })
+            }
+            //尝试推入下一个
+            _this.scoped(resolve)
+          })
+        //推入执行队列
+        _this.executorList.push(thread)
+        //尝试推入下一个
+        _this.scoped(resolve)
+      }else{
+        //执行队列
+        PromiseA.allSettled(_this.executorList)
+      }
+    }
+    //启动队列
+    this.start = function() {
+      if(['stoped','running'].indexOf(_this.status)!==-1) return
+      _this.status = 'running'
+      return new PromiseA((resolve) => {
+        //所有队列清空时结束
+        _this.scoped(resolve)
+      })
+    }
+    //停止队列
+    this.stop = function() {
+      if(['stoped','end'].indexOf(_this.status)!==-1) return
+      _this.status = 'stoped'
+    }
+    //添加队列
+    this.push = function(item) {
+      _this.pool.push(item)
+    }
+    //扩充队列
+    this.expend = function(size) {
+      _this.limit = size
+    }
+
+  }
+
+  let arr = new Array(16).fill((i) => new PromiseA(((resolve, reject) => {
+    setTimeout(() => {
+      console.log(1000)
+      reject()
+    },2000)
+  })))
+  let pool = new PromiseAPool(arr)
+  pool.start().then(() => {
+    console.log('end')
+  })
+  setTimeout(() => {
+    pool.expend(5)
+  },2000)
+
+</script>
+
+</html>
