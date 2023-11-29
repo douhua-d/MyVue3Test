@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <div>2324</div>
+</head>
+<body>
+<input type="text">
+<button id="my-button">执行任务</button>
+<!-- box容器 -->
+<div id="box" style="height:500px;width:400px;overflow: auto;margin-top:24px;"></div>
+</body>
+</html>
+<!-- https://mp.weixin.qq.com/s/qUi7g2K3k0xqn0HdadzP8Q?poc_token=HL-qZmWjU1aojhjWrPI6dRQaVnOWFKAl9Sq9ilwb -->
+<script>
+  /**
+   * https://mp.weixin.qq.com/s/qUi7g2K3k0xqn0HdadzP8Q?poc_token=HL-qZmWjU1aojhjWrPI6dRQaVnOWFKAl9Sq9ilwb
+   * 点击执行任务按钮会发现，我们不仅不能和输入框进行交互，连box容器区域的滚动也不再有响应，整个页面卡顿住了，
+   * 直到load任务执行完成，页面才恢复响应，输入框才能正常使用，box容器区域也能正常响应滚动。
+   * */
+  const box = document.getElementById('box');
+  for (let i = 0; i < 1000; i++) {
+    const myText = document.createElement('h2');
+    myText.innerText = i;
+    box.appendChild(myText);
+  }
+
+  // 执行任务
+  const myButton = document.getElementById('my-button');
+  myButton.addEventListener('click', load);
+
+  function load () {
+    const total = 300000;
+    for (let i = 0; i < total; i++) {
+      console.log(i);
+    }
+  }
+</script>

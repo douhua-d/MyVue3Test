@@ -5,9 +5,12 @@
          @contextmenu="onContextMenu"
          @mousedown="onMouseDown"
          @mousemove="onMouseMove"
+         @mouseup="onMouseUp"
     >
 
-      <path :d="pathString" stroke="blue" stroke-width="2px" />
+      <!--      <path :d="state.pathString" stroke="blue" stroke-width="2px" />-->
+
+      <polygon id="polygon" :points="state.points.join(' ')" fill="none" stroke="black" />
 
     </svg>
   </div>
@@ -16,36 +19,74 @@
 <script setup>
 import { ref, reactive, computed, watch, watchEffect } from 'vue';
 
-const curPointList = ref([]);
-const pathString = ref('M250 150 L150 350 L350 600 Z');
+// const curPointList = ref([]);
+// const pathString = ref('M250 150 L150 350 L350 600 Z');
+
 const state = reactive({
   isDrawing: false,
-  beginPoint: null
-
+  beginPoint: null,
+  pathString: 'M250 150 L150 350 L350 600 Z',
+  // points: '100,50 150,50 200,100',
+  points: [],
+  curPointList: []
 });
 
-watch(curPointList,
+watch(() => state.curPointList,
     (newVal, oldVal) => {
-      console.log('监听ref数据：' + newVal, oldVal);
-      pathString.value = newVal.length ? transPointToPathStr(newVal) : '';
+      // console.log('监听ref数据：' + newVal, oldVal);
+      state.pathString = newVal.length ? transPointToPathStr(newVal) : '';
+      // console.log(state.pathString);
     },
     { deep: true });
 
-const onMouseDown = (mouse) => {
-  const { clientX, clientY, offsetX, offsetY,button } = mouse;
-  console.log('onMouseDown', clientX, clientY, offsetX, offsetY);
-  // curPointList.value = [{ x: 100, y: 100 }, { x: 200, y: 70 }, { x: 500, y: 100 }];
+// watch(()=> state.points)
 
+const onMouseDown = (mouse) => {
+  const { clientX, clientY, offsetX, offsetY, button } = mouse;
+  console.log('onMouseDown', clientX, clientY, offsetX, offsetY);
+
+  if (button !== 0) return;
+
+  state.points = [];
+
+  const point = {
+    x: offsetX,
+    y: offsetY
+  };
+
+  state.beginPoint = point;
+
+  state.curPointList.push(point);
+
+  state.points.push(offsetX + ',' + offsetY);
+
+  state.isDrawing = true;
 
 };
 
 const onMouseMove = (mouse) => {
-  console.log('move', mouse.button);
+  const { clientX, clientY, offsetX, offsetY, button } = mouse;
+  console.log('move', button);
+  if (!state.isDrawing) return;
+  const point = {
+    x: offsetX,
+    y: offsetY
+  };
+  state.curPointList.push(point);
+
+  state.points.push(offsetX + ',' + offsetY);
+
+};
+
+const onMouseUp = mouse => {
+  const { clientX, clientY, offsetX, offsetY, button } = mouse;
+  if (button !== 0) return;
+
+  console.log('mouse-up');
+  state.isDrawing = false;
 };
 
 const transPointToPathStr = (pointList, close = false) => {
-  console.log({ pointList });
-  // debugger
   let str = '';
   if (pointList && pointList.length > 0) {
     pointList.map((point, index) => {

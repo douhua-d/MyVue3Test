@@ -3,10 +3,15 @@
   <!--  <HelloWorld msg="Welcome to Your Vue.js App"/>-->
   <!--  <Test/>Q-->
   <!--  <TwoColumnsLayout />-->
-<!--    <ThreeColumnsLayout />-->
+  <!--    <ThreeColumnsLayout />-->
   <!--  <AdaptionCard/>-->
   <!--  <pixi/>-->
-  <Svg />
+  <!--  <Svg />-->
+  <!--  <Svg2 />-->
+  <!--  <Svg3 />-->
+<!--  <Test />-->
+  <TimePlan/>
+
 </template>
 
 <script>
@@ -17,10 +22,18 @@ import ThreeColumnsLayout from '@/ThreeColumnsLayout';
 import AdaptionCard from '@/components/AdaptionCard';
 // import pixi from "@/pages/pixi";
 import Svg from '@/pages/svg';
+import Svg2 from '@/pages/svg2';
+import Svg3 from '@/pages/svg3';
+import Test from '@/pages/test';
+import TimePlan from '@/components/timeplan'
 
 export default {
   name: 'App',
   components: {
+    TimePlan,
+    Test,
+    Svg3,
+    Svg2,
     Svg,
     // pixi,
     AdaptionCard,
