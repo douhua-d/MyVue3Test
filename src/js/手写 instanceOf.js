@@ -21,17 +21,41 @@ let arr = [];
  */
 
 // https://juejin.cn/post/6844903749345886216  原型对象
-function myInstanceOf(obj, Constructor) {
-  const leftP = Object.getPrototypeOf(obj);
-  const rightP = Constructor.prototype;
-  if (leftP === null) {
-    return false;
+
+
+// function myInstanceOf(obj, Constructor) {
+//   const leftP = Object.getPrototypeOf(obj);
+//   const rightP = Constructor.prototype;
+//   if (leftP === null) {
+//     return false;
+//   }
+//   if (leftP === rightP) {
+//     return true;
+//   }
+//   return myInstanceOf(obj.__proto__, Constructor);
+// }
+//
+// console.log(myInstanceOf(fn, Function));
+// console.log(myInstanceOf(arr, Array));
+
+
+function myInstanceof(left, right) {
+  // 由于instance要检测的是某对象，需要有一个前置判断条件
+  //基本数据类型直接返回false
+  if(typeof left !== 'object' || left === null) return false;
+
+  let prototype = right.prototype
+  left = left.__proto__
+  while (true) {
+    if (left === null || left === undefined)
+      return false
+    if (prototype === left)
+      return true
+    left = left.__proto__
   }
-  if (leftP === rightP) {
-    return true;
-  }
-  return myInstanceOf(obj.__proto__, Constructor);
 }
 
-console.log(myInstanceOf(fn, Function));
-console.log(myInstanceOf(arr, Array));
+console.log('test', myInstanceof(null, Array)) // false
+console.log('test', myInstanceof([], Array)) // true
+console.log('test', myInstanceof('', Array)) // false
+console.log('test', myInstanceof({}, Object)) // true
