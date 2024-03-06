@@ -2,6 +2,9 @@
 //https://www.cnblogs.com/cxdong/p/11429445.html
 //https://segmentfault.com/a/1190000018265172
 
+// 函数调用栈、函数柯里化 
+// https://blog.csdn.net/nickroprak/article/details/123376576
+
 
 //判断当前函数传入的参数是否大于或等于fn需要参数的数量，如果是，直接执行fn
 // 如果传入参数数量不够，返回一个闭包，暂存传入的参数，并重新返回currying函数
