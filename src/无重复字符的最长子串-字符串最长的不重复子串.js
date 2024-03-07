@@ -29,3 +29,29 @@ console.log(lengthOfLongestSubstring("abcabcbb"));
 console.log(lengthOfLongestSubstring("bbbbb"));
 console.log(lengthOfLongestSubstring("pwwkew"));
 console.log(lengthOfLongestSubstring(""));
+
+
+
+
+// 无重复字符的最长子串  -bilibili视频讲解
+function lengthOfLongestStr(s) {
+  const len = s.length;
+  if (len == 0) {
+    return 0;
+  }
+  let i = 0, j = 0, maxLength = 0;
+  const set = new Set();
+  for (i; i < len; i++) {
+    if (!set.has(s[i])) {
+      set.add(s[i]);
+      maxLength = Math.max(maxLength, set.size);
+    } else {
+      while (set.has(s[i])) {
+        set.delete(s[j]);
+        j++;
+      }
+      set.add(s[i]);
+    }
+  }
+  return maxLength;
+}

@@ -25,3 +25,14 @@ class LRUCache {
     return val;
   }
 }
+
+function deepCopy(target) {
+  if (!target || typeof target !== "object") return;
+  const res = Array.isArray(target) ? [] : {};
+  for (let key in target) {
+    if (target.hasOwnProperty(key)) {
+      res[key] = typeof target[key] === "object" ? deepCopy(target[key]) : target[key];
+    }
+  }
+  return res;
+}

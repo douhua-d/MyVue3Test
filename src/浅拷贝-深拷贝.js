@@ -1,5 +1,6 @@
 // 浅拷贝的实现
 // Object.assign(target,source);
+
 // 拓展运算符
 // 数组的slice concat
 function shallowCopy(object) {
@@ -16,13 +17,26 @@ function shallowCopy(object) {
   return newObj;
 }
 
+
 /**
  * 不能处理循环引用。
  只考虑了Object对象，而Array对象、Date对象、RegExp对象、Map对象、Set对象都变成了Object对象，且值也不正确。
  丢失了属性名为Symbol类型的属性。
  丢失了不可枚举的属性。
  原型上的属性也被添加到拷贝的对象中了*/
-//深拷贝的实现
+
+// 简单版
+// const newObj = JSON.parse(JSON.stringify(oldObj));
+
+/**
+ * 局限性：
+ *
+ * 他无法实现对函数 、RegExp等特殊对象的克隆
+ * 会抛弃对象的constructor,所有的构造函数会指向Object
+ * 对象有循环引用,会报错
+ */
+
+//深拷贝的实现  面试简版
 function deepCopy(object) {
   // 只拷贝对象
   if (!object || typeof object !== "object") return;
@@ -109,3 +123,18 @@ function deepClone(target) {
 
   return clone(target);
 }
+
+const map = new Map();
+// const map = new WeakMap();
+map.set({ q: 1 }, 123);
+map.set({ q: 1 }, 123);
+map.set({ w: 1 }, 12223);
+map.set("bbb", 123);
+
+// console.log(map);
+map.forEach((val, key) => {
+  // console.log(123);
+  console.log(val, key);
+});
+
+

@@ -80,7 +80,7 @@ Sup.type = "午";
 // 另外，原型属性也不能在class里面设置，需要手动设置到prototype上，比如Sup.prototype.xxx = 'xxx'
 
 // 子类，继承父类
-class Sub extends Sup {
+class Sub extends Sup {n
   constructor(name, age) {
     super(name);
     this.age = age;
