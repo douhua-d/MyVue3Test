@@ -53,9 +53,17 @@ main {
     height: 100%;
 }
 #feed-page {
-
     border: 1px solid #ccc;
     width: 350px;
+    padding: 6px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+#more-button{
+    position: absolute;
+    bottom: -10px;
 }
 #thread-page {
     width: 100%;

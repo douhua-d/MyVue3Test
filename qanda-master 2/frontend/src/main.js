@@ -2,6 +2,10 @@ import { BACKEND_PORT } from './config.js';
 // A helper you may want to use when uploading new images to the server.
 import { fileToDataUrl } from './helpers.js';
 
+
+// global variable
+let requestThreadStartIndex = 0;
+
 //login-register-page
 document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("registerLink").addEventListener("click", showRegistrationForm);
@@ -184,6 +188,9 @@ const threadListContainer = document.getElementById("feed-page");
 // const moreButton = document.getElementById("moreButton");
 
 function getThreads(startIndex = 0) {
+    if (startIndex === 0) {
+        moreButtonDom.style.display = 'block';
+    }
     const token = localStorage.getItem('token');
     if (!token) {
         console.log("Token not found in localStorage");
@@ -205,6 +212,14 @@ function getThreads(startIndex = 0) {
     })
     .then(threadIds => {
         console.log("Threads:", threadIds);
+
+        // 更新请求的开始索引用于more获取
+        requestThreadStartIndex = startIndex + 5;
+        if (!threadIds.length) {
+            window.alert('no more data');
+            moreButtonDom.style.display = 'none';
+        }
+        
         // 用Promise.all发送请求获取所有线程的内容
         const threadContentPromises = threadIds.map(threadId => {
             return fetch(`http://localhost:5005/thread?id=${threadId}`, {
@@ -525,6 +540,7 @@ function getThreadComments(threadId) {
             
 			
 			const commentContent = document.createElement('p');
+            commentContent.setAttribute('id', `comment-content-${comment.id}`);
 			commentContent.textContent = comment.content;
 			
             const createdAtSpan = document.createElement('span');
@@ -841,6 +857,18 @@ function likeComment(threadId, commentId, commentLikes) {
 //     })
 // }
 
+function editComment(threadId, commentId, commentContent){
+    console.log(threadId, commentId, commentContent);
+    const commentContentDom = document.getElementById(`comment-content-${commentId}`);
+    // commentContentDom.style.display = 'none';
+    // 渲染编辑评论输入框和评论按钮
+    const editCommentInput = document.createElement("textarea");
+    editCommentInput.placeholder = "Edit a new comment";
+    editCommentInput.id = "editCommentInput";
+    editCommentInput.value =commentContent;
+    commentContentDom.parentNode.replaceChild(editCommentInput,commentContentDom)
+}
+
 
 
 
@@ -956,18 +984,6 @@ function createThread(data) {
         window.location.href = '#/dashboard';
             clearThreadContainer();
             getThreads();
-            
-            // 在获取线程列表后，显示第一个线程的内容
-            // setTimeout(() => {
-            //     const threads = JSON.parse(localStorage.getItem('threadContents')); // 获取线程列表
-            //     console.log('thread给我看看', threads)
-            //     if (threads && threads.length > 0) {
-            //         const latestThreadId = threads[0].id; // 获取最新线程的ID
-            //        
-            //         showThreadDetail(latestThreadId);// 显示最新线程的内容
-            //     }
-            // }, 100); // 等待一小段时间以确保线程列表已经更新
-        
     })
     .catch(error => {
         console.error('There was a problem with the fetch operation:', error);
@@ -1145,6 +1161,13 @@ function selectFirstThread() {
   // 显示线程详情
   showThreadDetail(threadId);
 }
+
+function handleGetMoreThreads () {
+    getThreads(requestThreadStartIndex)
+}
+
+const moreButtonDom = document.getElementById('more-button');
+moreButtonDom.addEventListener('click', handleGetMoreThreads);
 
 //----thread like ----
 
