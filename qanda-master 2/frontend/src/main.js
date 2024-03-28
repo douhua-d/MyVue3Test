@@ -28,10 +28,8 @@ document.addEventListener('DOMContentLoaded', function () {
 //---login function---
 function fetchUserDetails (userId, token) {
     return fetch(`http://localhost:5005/user?userId=${userId}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+        method: 'GET', headers: {
+            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
         }
     })
         .then(response => {
@@ -65,16 +63,13 @@ function login (event) {
     }
 
     const data = {
-        email,
-        password
+        email, password
     };
 
     fetch('http://localhost:5005/auth/login', {
-        method: 'POST',
-        headers: {
+        method: 'POST', headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+        }, body: JSON.stringify(data)
     })
         .then(res => {
             if (!res.ok) {
@@ -129,19 +124,14 @@ function register (event) {
 
     // 构造请求体数据
     const data = {
-        email,
-        name,
-        password,
-        confirmPassword
+        email, name, password, confirmPassword
     };
 
     // 发送 POST 请求
     fetch('http://localhost:5005/auth/register', {
-        method: 'POST',
-        headers: {
+        method: 'POST', headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+        }, body: JSON.stringify(data)
     })
         .then(res => {
             if (!res.ok) {
@@ -200,10 +190,8 @@ function getThreads (startIndex = 0) {
     }
     // 发送 GET 请求获取线程列表
     fetch(`http://localhost:5005/threads?start=${startIndex}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+        method: 'GET', headers: {
+            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
         }
     })
         .then(response => {
@@ -225,10 +213,8 @@ function getThreads (startIndex = 0) {
             // 用Promise.all发送请求获取所有线程的内容
             const threadContentPromises = threadIds.map(threadId => {
                 return fetch(`http://localhost:5005/thread?id=${threadId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
+                    method: 'GET', headers: {
+                        'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
                     }
                 });
             });
@@ -245,10 +231,8 @@ function getThreads (startIndex = 0) {
             // 获取所有用户的详情
             const userDetailPromises = creatorIds.map(creatorId => {
                 return fetch(`http://localhost:5005/user?userId=${creatorId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
+                    method: 'GET', headers: {
+                        'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
                     }
                 }).then(response => response.json());
             });
@@ -347,10 +331,8 @@ function showThreadDetail (threadId) {
     }
 
     fetch(`http://localhost:5005/thread?id=${threadId}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+        method: 'GET', headers: {
+            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
         }
     })
         .then(response => {
@@ -365,10 +347,8 @@ function showThreadDetail (threadId) {
             // 如果创建者详情不存在，则获取创建者详情
             if (!thread.creator) {
                 return fetch(`http://localhost:5005/user?userId=${thread.creatorId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
+                    method: 'GET', headers: {
+                        'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
                     }
                 }).then(response => {
                     if (!response.ok) {
@@ -505,10 +485,8 @@ function getThreadComments (threadId) {
         return;
     }
     fetch(`http://localhost:5005/comments?threadId=${threadId}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+        method: 'GET', headers: {
+            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
         }
     })
         .then(response => {
@@ -727,10 +705,8 @@ function getCreatorName (creatorId) {
     }
 
     return fetch(`http://localhost:5005/user?userId=${creatorId}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+        method: 'GET', headers: {
+            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
         }
     })
         .then(response => {
@@ -788,12 +764,9 @@ function deleteComment (threadId, commentId) {
     console.log('commentId', commentId);
     const token = localStorage.getItem('token');
     fetch('http://localhost:5005/comment', {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ 'id': commentId })
+        method: 'DELETE', headers: {
+            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
+        }, body: JSON.stringify({ 'id': commentId })
     })
         .then(response => {
             if (!response.ok) {
@@ -876,12 +849,9 @@ function likeComment (threadId, commentId, commentLikes) {
     const likeButton = document.getElementById(`like${commentId}`);
 
     fetch(`http://localhost:5005/comment/like`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ id: commentId, turnon: !isLiked }) // 添加了 userId
+        method: 'PUT', headers: {
+            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
+        }, body: JSON.stringify({ id: commentId, turnon: !isLiked }) // 添加了 userId
     })
         .then(response => {
             if (!response.ok) {
@@ -939,12 +909,9 @@ function postEditComment (data) {
         return;
     }
     return fetch(`http://localhost:5005/comment`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify(data)
+        method: 'PUT', headers: {
+            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
+        }, body: JSON.stringify(data)
     }).then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -1063,12 +1030,9 @@ function createThread (data) {
     }
 
     fetch('http://localhost:5005/thread', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify(data)
+        method: 'POST', headers: {
+            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
+        }, body: JSON.stringify(data)
     })
         .then(response => {
             if (!response.ok) {
@@ -1103,9 +1067,7 @@ document.getElementById('submit-thread-button').addEventListener('click', functi
     const isPublic = document.getElementById('isPublic').checked; // 获取 checkbox 的状态
 
     const threadData = {
-        title: title,
-        isPublic: isPublic,
-        content: content
+        title: title, isPublic: isPublic, content: content
     };
 
     createThread(threadData);
@@ -1155,10 +1117,8 @@ function updateThread (threadId, updatedData) {
     fetch(`http://localhost:5005/thread?id=${threadId}`, {
         method: 'PUT', // 使用 PUT 方法更新线程
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify(requestBody) // 更新后的线程内容
+            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
+        }, body: JSON.stringify(requestBody) // 更新后的线程内容
     })
         .then(response => {
             if (!response.ok) {
@@ -1214,12 +1174,9 @@ function deleteThread (threadId) {
     console.log('show', threadId);
     const token = localStorage.getItem('token');
     fetch(`http://localhost:5005/thread?id=${threadId}`, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json'
-        },
-        // 如果需要发送请求体，确保它的格式正确
+        method: 'DELETE', headers: {
+            'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'
+        }, // 如果需要发送请求体，确保它的格式正确
         body: JSON.stringify({ id: threadId }) // 例如，将线程ID作为对象的属性发送
     })
         .then(response => {
@@ -1289,12 +1246,9 @@ function toggleLikeThread (threadId) {
     }
 
     fetch(`http://localhost:5005/thread/like`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ id: threadId, turnon: !thread.likes.includes(currentUser.id) })
+        method: 'PUT', headers: {
+            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
+        }, body: JSON.stringify({ id: threadId, turnon: !thread.likes.includes(currentUser.id) })
     })
         .then(response => {
             if (!response.ok) {
@@ -1351,12 +1305,9 @@ function toggleWatchThread (threadId) {
     }
 
     fetch(`http://localhost:5005/thread/watch`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ id: threadId, turnon: !thread.watchees.includes(currentUser.id) })
+        method: 'PUT', headers: {
+            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
+        }, body: JSON.stringify({ id: threadId, turnon: !thread.watchees.includes(currentUser.id) })
     })
         .then(response => {
             if (!response.ok) {
@@ -1401,9 +1352,7 @@ function toggleWatchThread (threadId) {
 function postComment (threadId, content, parentCommentId = null) {
     const commentContent = document.getElementById('newCommentInput').value;
     const commentData = {
-        'content': commentContent,
-        'threadId': threadId,
-        'parentCommentId': null
+        'content': commentContent, 'threadId': threadId, 'parentCommentId': null
     };
 
     // 评论的评论内容
@@ -1419,12 +1368,9 @@ function postComment (threadId, content, parentCommentId = null) {
         return;
     }
     fetch('http://localhost:5005/comment', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify(commentData) // 将评论数据作为请求体
+        method: 'POST', headers: {
+            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
+        }, body: JSON.stringify(commentData) // 将评论数据作为请求体
     })
         .then(response => {
             if (!response.ok) {
@@ -1463,102 +1409,237 @@ function calculateTimeAgo (timestamp) {
     }
 }
 
-
-// user部分
-document.getElementById('person-button').addEventListener('click', function() {
+function getUserProfile () {
     const token = localStorage.getItem('token');
-    const storedUserId = window.localStorage.getItem("userId");
+    const storedUserId = window.localStorage.getItem('userId');
     if (!token || !storedUserId) {
         console.error('Token or userId not found in localStorage');
         return Promise.resolve(null); // 返回一个解决的 promise，表示没有数据
     }
     // 发送请求获取用户个人资料信息
     fetch(`http://localhost:5005/user?userId=${storedUserId}`, {
-        method: 'GET',
-        headers: {
-            "Content-Type": "application/json",
-            'Authorization': 'Bearer ' + token, 
+        method: 'GET', headers: {
+            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
         }
     })
-    .then(response => response.json())
-    .then(profileData => {
-        moreButtonDom.style.display = 'none'
-        
-        // 隐藏feed-page和thread-page
-        document.getElementById('feed-page').classList.add('hidden');
-        document.getElementById('thread-page').classList.add('hidden');
+        .then(response => response.json())
+        .then(profileData => {
+            moreButtonDom.style.display = 'none';
 
-        // 显示user-own-page
-        const userOwnPage = document.getElementById('user-own-page');
-        const userThreadPage = document.getElementById('user-thread-page');
-        userOwnPage.classList.remove('hidden');
-        userThreadPage.classList.remove('hidden');
+            // 隐藏feed-page和thread-page
+            document.getElementById('feed-page').classList.add('hidden');
+            document.getElementById('thread-page').classList.add('hidden');
 
-        // 清空user-own-page中的内容
-        while (userOwnPage.firstChild) {
-            userOwnPage.removeChild(userOwnPage.firstChild);
-        }
+            // 显示user-own-page
+            const userOwnPage = document.getElementById('user-own-page');
+            const userThreadPage = document.getElementById('user-thread-page');
+            userOwnPage.classList.remove('hidden');
+            userThreadPage.classList.remove('hidden');
 
-        // 创建user-own-page中的各个元素
-        const profileTitle = document.createElement('h2');
-        profileTitle.id = 'profileTitle';
-        profileTitle.textContent = 'User Detail';
-        userOwnPage.appendChild(profileTitle);
+            // 清空user-own-page中的内容
+            while (userOwnPage.firstChild) {
+                userOwnPage.removeChild(userOwnPage.firstChild);
+            }
 
-        const emailLabel = document.createElement('p');
-        emailLabel.id = 'emailLabel';
-        userOwnPage.appendChild(emailLabel);
+            // 创建user-own-page中的各个元素
+            const profileTitle = document.createElement('h2');
+            profileTitle.id = 'profileTitle';
+            profileTitle.textContent = 'User Detail';
+            userOwnPage.appendChild(profileTitle);
 
-        const usernameLabel = document.createElement('p');
-        usernameLabel.id = 'usernameLabel';
-        userOwnPage.appendChild(usernameLabel);
+            const emailLabel = document.createElement('p');
+            emailLabel.id = 'emailLabel';
+            userOwnPage.appendChild(emailLabel);
 
-        const userImageLabel = document.createElement('p');
-        userImageLabel.id = 'userImageLabel';
-        userOwnPage.appendChild(userImageLabel);
+            const usernameLabel = document.createElement('p');
+            usernameLabel.id = 'usernameLabel';
+            userOwnPage.appendChild(usernameLabel);
 
-        const adminLabel = document.createElement('p');
-        adminLabel.id = 'adminLabel';
-        userOwnPage.appendChild(adminLabel);
+            const userImageLabel = document.createElement('p');
+            userImageLabel.id = 'userImageLabel';
+            userOwnPage.appendChild(userImageLabel);
 
-        // 添加更新个人资料按钮
-        const updateProfileBtn = document.createElement('button');
-        updateProfileBtn.textContent = 'Update Profile';
-        updateProfileBtn.id = 'updateProfileBtn';
-        updateProfileBtn.addEventListener('click', function() {
-            // 执行更新个人资料的操作
-            showUpdateProfileDialog(profileData);
+            const adminLabel = document.createElement('p');
+            adminLabel.id = 'adminLabel';
+            userOwnPage.appendChild(adminLabel);
+
+            // 添加更新个人资料按钮
+            const updateProfileBtn = document.createElement('button');
+            updateProfileBtn.textContent = 'Update Profile';
+            updateProfileBtn.id = 'updateProfileBtn';
+            updateProfileBtn.addEventListener('click', function () {
+                // 执行更新个人资料的操作
+                showUpdateProfileDialog(profileData);
+            });
+            userOwnPage.appendChild(updateProfileBtn);
+
+            // 添加关闭按钮
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'Back';
+            closeButton.classList.add('close-button');
+            closeButton.addEventListener('click', function () {
+                // 隐藏user-own-page
+                userOwnPage.classList.add('hidden');
+                userThreadPage.classList.add('hidden');
+                // 显示feed-page和thread-page
+                document.getElementById('feed-page').classList.remove('hidden');
+                document.getElementById('thread-page').classList.remove('hidden');
+                moreButtonDom.style.display = 'block';
+            });
+            userOwnPage.appendChild(closeButton);
+
+
+            // 设置个人资料信息
+            emailLabel.textContent = 'Email:' + profileData.email;
+            usernameLabel.textContent = 'Name:' + profileData.name;
+            userImageLabel.textContent = 'Image:' + profileData.image;
+            userImageLabel.textContent = 'Admin:' + profileData.admin;
+
+        })
+        .catch(error => {
+            console.error('获取用户个人资料失败:', error);
         });
-        userOwnPage.appendChild(updateProfileBtn);
+}
 
-        // 添加关闭按钮
-        const closeButton = document.createElement('button');
-        closeButton.textContent = 'Back';
-        closeButton.classList.add('close-button');
-        closeButton.addEventListener('click', function() {
-            // 隐藏user-own-page
-            userOwnPage.classList.add('hidden');
-            userThreadPage.classList.add('hidden');
-            // 显示feed-page和thread-page
-            document.getElementById('feed-page').classList.remove('hidden');
-            document.getElementById('thread-page').classList.remove('hidden');
-            moreButtonDom.style.display = 'block';
-        });
-        userOwnPage.appendChild(closeButton);
-        
+// user部分
+document.getElementById('person-button').addEventListener('click',
+    getUserProfile()
+);
 
-        // 设置个人资料信息
-        emailLabel.textContent = 'Email:' + profileData.email;
-        usernameLabel.textContent = 'Name:' + profileData.name;
-        userImageLabel.textContent = 'Image:' + profileData.image;
-        userImageLabel.textContent = 'Admin:' + profileData.admin;
-       
-    })
-    .catch(error => {
-        console.error('获取用户个人资料失败:', error);
+// 创建弹窗的HTML结构  
+function createModal (title, profileData, message) {
+    const modal = document.createElement('div');
+    modal.id = 'myModal';
+    modal.style.position = 'fixed';
+    modal.style.left = '0';
+    modal.style.top = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+    modal.style.display = 'flex';
+    modal.style.justifyContent = 'center';
+    modal.style.alignItems = 'center';
+    modal.style.zIndex = '9999';
+    modal.style.overflow = 'auto';
+    modal.tabIndex = -1; // 允许聚焦模态框
+
+    const modalContent = document.createElement('div');
+    modalContent.style.backgroundColor = '#fff';
+    modalContent.style.borderRadius = '5px';
+    modalContent.style.padding = '20px';
+    modalContent.style.boxShadow = '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)';
+
+    // 创建标题元素  
+    const titleElement = document.createElement('h2');
+    titleElement.textContent = title;
+    modalContent.appendChild(titleElement);
+
+    const closeButton = document.createElement('button');
+    closeButton.textContent = '取消';
+    closeButton.addEventListener('click', () => {
+        modal.remove();
     });
-});
 
+    const confirmButton = document.createElement('button');
+    confirmButton.textContent = '确定';
+    confirmButton.addEventListener('click', () => {
+        alert('Are you sure modify ?');
+        console.log(imageInput.files[0]);
+        if (imageInput.files[0]) {
+            // 创建文件读取器
+            const reader = new FileReader();
+            let base64;
+            // 读取文件并转为base64
+            reader.onload = function (e) {
+                base64 = e.target.result;
+                console.log(base64);
+                const updateData = {
+                    email: emailInput.value,
+                    password: passwordInput.value,
+                    name: nameInput.value,
+                    image: base64
+                };
+                updateUserProfile(updateData).then(() => {
+                    modal.remove();
+                    getUserProfile();
+                });
+            };
+            // 开始读取文件
+            reader.readAsDataURL(imageInput.files[0]);
+        } else {
+            const updateData = {
+                email: emailInput.value,
+                password: passwordInput.value,
+                name: nameInput.value,
+                image: ''
+            };
+            updateUserProfile(updateData).then(() => {
+                modal.remove();
+                getUserProfile();
+            });
+        }
+    });
+
+    // const messageElement = document.createElement('p');
+    // messageElement.textContent = message;
+
+    // 创建表单元素
+    const form = document.createElement('form');
+    form.addEventListener('submit', function (event) {
+        event.preventDefault(); // 阻止默认提交行为
+    });
+
+    // 创建电子邮件地址输入框
+    const emailInput = document.createElement('input');
+    emailInput.type = 'email';
+    emailInput.name = 'email';
+    emailInput.value = profileData.email;
+    let br = document.createElement('br');
+    form.appendChild(emailInput);
+    form.appendChild(br);
+
+    // 创建姓名输入框
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.name = 'name';
+    nameInput.value = profileData.name;
+    let br2 = document.createElement('br');
+    form.appendChild(nameInput);
+    form.appendChild(br2);
+
+    // 创建密码输入框
+    const passwordInput = document.createElement('input');
+    passwordInput.type = 'password';
+    passwordInput.name = 'password';
+    passwordInput.value = profileData.password;
+    let br3 = document.createElement('br');
+    form.appendChild(passwordInput);
+    form.appendChild(br3);
+
+    // 创建图像上传输入框
+    const imageInput = document.createElement('input');
+    imageInput.type = 'file';
+    imageInput.name = 'image';
+    let br4 = document.createElement('br');
+    form.appendChild(imageInput);
+    form.appendChild(br4);
+
+
+    // modalContent.appendChild(messageElement);
+    modalContent.appendChild(form);
+    modalContent.appendChild(closeButton);
+    modalContent.appendChild(confirmButton);
+    modal.appendChild(modalContent);
+
+    document.body.appendChild(modal);
+    modal.focus(); // 将焦点设置在模态框上，确保Esc键可以关闭它  
+}
+
+function showUpdateProfileDialog (profileData) {
+    console.log({ profileData });
+    const message = '这是一个带有取消和确定按钮的自定义弹窗！';
+    createModal('Modify user information', profileData, message);
+}
 
 // function showUpdateProfileDialog(profileData) {
 //     // 创建对话框元素
@@ -1635,36 +1716,34 @@ document.getElementById('person-button').addEventListener('click', function() {
 //     document.body.appendChild(dialog);
 // }
 
-// // 更新用户个人资料的函数
-// function updateUserProfile(userData) {
-//     const token = localStorage.getItem('token');
-//     const userId = window.localStorage.getItem("userId");
-//     if (!token) {
-//         console.error('Token not found in localStorage');
-//         return Promise.resolve(null);
-//     }
+// 更新用户个人资料的函数
+function updateUserProfile (userData) {
+    const token = localStorage.getItem('token');
+    const userId = window.localStorage.getItem('userId');
+    if (!token) {
+        console.error('Token not found in localStorage');
+        return Promise.resolve(null);
+    }
 
-//     return fetch(`http://localhost:5005/user/${userId}`, {
-//         method: 'PUT',
-//         headers: {
-//             'Authorization': 'Bearer ' + token
-//         },
-//         body: userData // 使用 FormData 对象作为请求体
-//     })
-//     .then(response => {
-//         if (!response.ok) {
-//             throw new Error('Failed to update user profile');
-//         }
-//         console.log('User profile updated successfully');
-//         return response.json();
-//     })
-//     .catch(error => {
-//         console.error('Error updating user profile:', error);
-//         throw error;
-//     });
-// }
-
-
+    return fetch(`http://localhost:5005/user`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify(userData)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to update user profile');
+            }
+            console.log('User profile updated successfully');
+            return response.json();
+        })
+        .catch(error => {
+            console.error('Error updating user profile:', error);
+            throw error;
+        });
+}
 
 
 // function getUserThread(){
@@ -1681,31 +1760,30 @@ document.getElementById('person-button').addEventListener('click', function() {
 // })
 // }
 
-function getUserThreads() {
+function getUserThreads () {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
 
     fetch(`http://localhost:5005/thread?creatorId=${userId}`, {
-        method: 'GET',
-        headers: {
+        method: 'GET', headers: {
             'Authorization': 'Bearer ' + token
         }
     })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error('Failed to fetch user threads');
-        }
-    })
-    .then(data => {
-        console.log('User threads:', data);
-        // 在这里处理获取到的用户线程数据
-    })
-    .catch(error => {
-        console.error('Error fetching user threads:', error);
-        // 在这里处理错误
-    });
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Failed to fetch user threads');
+            }
+        })
+        .then(data => {
+            console.log('User threads:', data);
+            // 在这里处理获取到的用户线程数据
+        })
+        .catch(error => {
+            console.error('Error fetching user threads:', error);
+            // 在这里处理错误
+        });
 }
 
 function showView () {
