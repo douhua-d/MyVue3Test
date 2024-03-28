@@ -251,6 +251,9 @@ function getThreads(startIndex = 0) {
         console.log(threadContents);
         // 渲染线程内容到页面上
         renderThreads(threadContents, userDetails);
+
+        // 选中当前列表的第一项&展示该项详情
+        selectFirstThread();
     })
     .catch(error => {
         console.error("Error loading threads:", error);
@@ -263,6 +266,7 @@ function renderThreads(threads) {
     threads.forEach(thread => {
         const threadElement = document.createElement("div");
         threadElement.classList.add("thread");
+        threadElement.dataset.threadid = thread.id;
 
         // 创建线程标题元素
         const titleElement = document.createElement("h3");
@@ -950,18 +954,19 @@ function createThread(data) {
         document.getElementById('isPublic').checked = false; // 清空内容输入框
        
         window.location.href = '#/dashboard';
-            
+            clearThreadContainer();
             getThreads();
+            
             // 在获取线程列表后，显示第一个线程的内容
-            setTimeout(() => {
-                const threads = JSON.parse(localStorage.getItem('threadContents')); // 获取线程列表
-                console.log('thread给我看看', threads)
-                if (threads && threads.length > 0) {
-                    const latestThreadId = threads[0].id; // 获取最新线程的ID
-                    
-                    showThreadDetail(latestThreadId);// 显示最新线程的内容
-                }
-            }, 100); // 等待一小段时间以确保线程列表已经更新
+            // setTimeout(() => {
+            //     const threads = JSON.parse(localStorage.getItem('threadContents')); // 获取线程列表
+            //     console.log('thread给我看看', threads)
+            //     if (threads && threads.length > 0) {
+            //         const latestThreadId = threads[0].id; // 获取最新线程的ID
+            //        
+            //         showThreadDetail(latestThreadId);// 显示最新线程的内容
+            //     }
+            // }, 100); // 等待一小段时间以确保线程列表已经更新
         
     })
     .catch(error => {
@@ -1124,6 +1129,21 @@ function deleteThread(threadId) {
     .catch(error => {
         console.error('Error deleting thread:', error);
     });
+}
+
+// 刷新后选中当前列表的第一项&展示该项详情
+function selectFirstThread() {
+  const allThreads = document.querySelectorAll(".thread");
+  // 清除其他线程的选中状态
+  allThreads.forEach(item => {
+    item.classList.remove("selected");
+  });
+  const firstElement = allThreads[0];
+  // 添加选中状态到当前线程
+  firstElement.classList.add("selected");
+  const threadId = firstElement.dataset.threadid;
+  // 显示线程详情
+  showThreadDetail(threadId);
 }
 
 //----thread like ----
