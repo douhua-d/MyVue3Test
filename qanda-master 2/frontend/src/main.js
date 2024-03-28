@@ -518,11 +518,16 @@ function getThreadComments (threadId) {
             return response.json();
         })
         .then(comments => {
+            const allComments = comments;
             comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            // 过滤非子评论
+            comments = comments.filter(item => !item.parentCommentId);
             // 遍历评论列表，并将每条评论显示在页面上
             console.log('comments', comments);
             comments.forEach(comment => {
                 console.log('comment id', comment);
+                const currentCommentChildren = allComments.filter(item => item.parentCommentId === comment.id);
+
                 const commentListContainer = document.createElement('div');
                 commentListContainer.setAttribute('id', 'comment-list-container');
 
@@ -533,6 +538,7 @@ function getThreadComments (threadId) {
                 commentDetail.classList.add('commentDetail');
                 commentDetail.setAttribute('id', comment.id);
                 const commentAutor = document.createElement('p');
+                commentAutor.style.cssText = 'font-size: 16px;font-weight: 900;';
                 getCreatorName(comment.creatorId)
                     .then(user => {
                         commentAutor.textContent = user;
@@ -543,6 +549,7 @@ function getThreadComments (threadId) {
 
 
                 const commentContent = document.createElement('p');
+                commentContent.style.color = '#9297a1';
                 commentContent.setAttribute('id', `comment-content-${comment.id}`);
                 commentContent.textContent = comment.content;
 
@@ -632,20 +639,85 @@ function getThreadComments (threadId) {
 
                 const commentForCommentBtn = document.createElement('button');
                 commentForCommentBtn.textContent = 'Comment';
+                commentForCommentBtn.dataset.commentid = comment.id;
                 commentForCommentBtn.setAttribute('id', 'commentForCommentBtn');
                 commentDetail.appendChild(commentForCommentBtn);
+                commentForCommentBtn.addEventListener('click', () => {
+                    handleCommentForComment(threadId, comment.id, commentDetail, commentForCommentBtn);
+                });
 
                 if (comment.creatorId.toString() === localStorage.userId || localStorage.currentUser.admin === 'true') {
                     deleteCommentBtn.classList.remove('hidden');
                     editCommentBtn.classList.remove('hidden');
                 }
+
+                renderCommentChildren(currentCommentChildren, commentDetail);
             });
         }).catch(error => {
         console.error('Error loading threads:', error);
     });
 }
 
+function renderCommentChildren (currentCommentChildren, parentCommentDetail) {
+    currentCommentChildren.forEach(comment => {
+        const commentListContainer = document.createElement('div');
+        commentListContainer.setAttribute('id', 'comment-list-container');
+
+        const commentDetail = document.createElement('div');
+        commentDetail.classList.add('commentDetail');
+        commentDetail.setAttribute('id', comment.id);
+
+        const commentAutor = document.createElement('p');
+        commentAutor.style.cssText = 'font-size:16px; font-weight: 900;';
+        getCreatorName(comment.creatorId).then(user => {
+            commentAutor.textContent = user;
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+
+        const commentContent = document.createElement('p');
+        commentContent.style.color = '#9297a1';
+        commentContent.setAttribute('id', `comment-content-${comment.id}`);
+        commentContent.textContent = comment.content;
+
+        const createdAtSpan = document.createElement('span');
+        createdAtSpan.setAttribute('id', `comment-createdAt-${comment.id}`);
+        createdAtSpan.textContent = calculateTimeAgo(comment.createdAt);
+
+        // const commentLikeNum = document.createElement('p');
+        // commentLikeNum.textContent = `Likes:${comment.likes.length}`;
+
+        commentDetail.appendChild(commentAutor);
+        commentDetail.appendChild(commentContent);
+        commentDetail.appendChild(createdAtSpan);
+        // commentDetail.appendChild(commentLikeNum);
+        commentListContainer.appendChild(commentDetail);
+        commentListContainer.style.marginLeft = '30px';
+
+        parentCommentDetail.appendChild(commentListContainer);
+    });
+
+}
+
 //
+function handleCommentForComment (threadId, parentCommentId, commentDetail, commentForCommentBtn) {
+    const cloneCommentForCommentBtn = commentForCommentBtn.cloneNode(true);
+    const newCommentInput = document.createElement('textarea');
+    newCommentInput.placeholder = 'Add a new comment';
+    newCommentInput.style.cssText = 'position: absolute; left: 330px;; top: 180px';
+    commentDetail.style.position = 'relative';
+    commentDetail.appendChild(newCommentInput);
+
+    const confirmButton = document.createElement('button');
+    confirmButton.textContent = 'confirmAdd';
+    commentForCommentBtn.parentNode.replaceChild(confirmButton, commentForCommentBtn);
+    confirmButton.addEventListener('click', () => {
+        postComment(threadId, newCommentInput.value, parentCommentId);
+        setTimeout(() => {
+            confirmButton.parentNode.replaceChild(cloneCommentForCommentBtn, confirmButton);
+        });
+    });
+}
 
 function getCreatorName (creatorId) {
     const token = localStorage.getItem('token');
@@ -1326,13 +1398,21 @@ function toggleWatchThread (threadId) {
 //---comment function 
 
 //----post comment fuction ----
-function postComment (threadId) {
+function postComment (threadId, content, parentCommentId = null) {
     const commentContent = document.getElementById('newCommentInput').value;
     const commentData = {
         'content': commentContent,
         'threadId': threadId,
         'parentCommentId': null
     };
+
+    // 评论的评论内容
+    if (content) {
+        commentData.content = content;
+    }
+    if (parentCommentId) {
+        commentData.parentCommentId = parentCommentId;
+    }
     const token = localStorage.getItem('token');
     if (!token) {
         console.error('Token not found in localStorage');
