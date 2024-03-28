@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login and Registration</title>
+<style>
+    /* Add your custom CSS styles here */
+</style>
+</head>
+<body>
+
+<!-- Login Form -->
+<div id="loginForm" style="display:block;">
+    <h2>Login</h2>
+    <form id="loginFormElement">
+        <label for="email">Email:</label><br>
+        <input type="email" id="logemail" name="email" required><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="loassword" name="password" required><br><br>
+        <button type="submit">Login</button>
+    </form>
+    <div id="loginError" style="color:red;"></div>
+    <p>Don't have an account? <a href="#" onclick="showRegistrationForm()">Register here</a>.</p>
+</div>
+
+<!-- Registration Form -->
+<div id="registrationForm" style="display:none;">
+    <h2>Registration</h2>
+    <form id="registrationFormElement">
+        <label for="regEmail">Email:</label><br>
+        <input type="email" id="regEmail" name="regEmail" required><br>
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required><br>
+        <label for="regPassword">Password:</label><br>
+        <input type="password" id="regPassword" name="regPassword" required><br>
+        <label for="confirmPassword">Confirm Password:</label><br>
+        <input type="password" id="confirmPassword" name="confirmPassword" required><br><br>
+        <button type="submit">Register</button>
+    </form>
+    <div id="registrationError" style="color:red;"></div>
+    <p>Already have an account? <a href="#" onclick="showLoginForm()">Login here</a>.</p>
+</div>
+
+<script>
+function showRegistrationForm() {
+    document.getElementById("loginForm").style.display = "none";
+    document.getElementById("registrationForm").style.display = "block";
+}
+
+function showLoginForm() {
+    document.getElementById("registrationForm").style.display = "none";
+    document.getElementById("loginForm").style.display = "block";
+}
+
+document.getElementById("loginFormElement").addEventListener("submit", function(event) {
+    event.preventDefault();
+    var formData = new FormData(this);
+    fetch("/auth/login", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to login');
+        }
+        // Handle successful login
+    })
+    .catch(error => {
+        document.getElementById("loginError").innerText = error.message;
+    });
+});
+
+document.getElementById("registrationFormElement").addEventListener("submit", function(event) {
+    event.preventDefault();
+    var regPassword = document.getElementById("regPassword").value;
+    var confirmPassword = document.getElementById("confirmPassword").value;
+    if (regPassword !== confirmPassword) {
+        document.getElementById("registrationError").innerText = "Passwords do not match";
+        return;
+    }
+
+    var formData = new FormData(this);
+    fetch("/auth/register", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to register');
+        }
+        // Handle successful registration
+    })
+    .catch(error => {
+        document.getElementById("registrationError").innerText = error.message;
+    });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+/* base styles, feel free to edit */
+.full-page {
+    display: flex;
+    height: 100vh; 
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.hidden {
+    display: none;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px; 
+    border: 1px solid #ccc;
+    border-radius: 5px; 
+    background-color: #fff; 
+}
+
+#dashboard.full-page {
+	align-items: flex-start; 
+	justify-content: flex-start;
+	flex-direction: column;
+}
+
+#dashboard.full-page header {
+	display: flex;
+	width: 100%;
+	height: 100px;
+    background-color: #3E3E3E;
+	flex-direction: row;
+	color: white;
+	align-items: center;
+	justify-content: space-between;
+    padding: 0;
+}
+
+#dashboard.full-page footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100px; 
+    background-color: #f0f0f0;
+}
+main {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+#feed-page {
+
+    border: 1px solid #ccc;
+    width: 350px;
+}
+#thread-page {
+    width: 100%;
+    padding: 20px;
+}
+
+.thread {
+    cursor: pointer;
+}
+.selected {
+    background-color: lightblue; 
+}
+
+.liked {
+    background-color: green; 
+    color: white; 
+  }
+  
+  /* 默认样式 */
+  button {
+    padding: 10px 20px;
+    background-color: #ccc;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    margin: 20px;
+  }
+
+  .watched {
+    background-color: pink; 
+    color: white; 
+  }
+  
+  /* 默认样式 */
+  button {
+    padding: 5px 10px;
+    background-color: #ccc;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    margin: 10px;
+  }
+
+  .commentDetail {
+    border: 1px solid #ccc; /* 边框样式 */
+    padding: 10px; /* 内边距 */
+    margin-bottom: 10px; /* 下边距 */
+}

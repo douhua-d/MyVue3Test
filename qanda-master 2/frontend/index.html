@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>LurkForWork</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- You can add your styles and scripts here -->
+    <link rel="stylesheet" type="text/css" media="screen" href="styles/global.css" />
+</head>
+<body>
+    <!-- This is an example app structure, you can modify this as much as you choose -->
+    <section id="login-register-page" class="full-page">
+        <div id="container">
+            <div id="loginForm" style="display:block;">
+                <h2>Login</h2>
+                <form id="loginFormElement">
+                    <label for="email">Email:</label><br>
+                    <input type="email" id="logEmail" name="email" required><br>
+                    <label for="password">Password:</label><br>
+                    <input type="password" id="logPassword" name="password" required><br><br>
+                    <button id="login-button" class="first-button">Submit</button>
+                </form>
+                <div id="loginError" style="color:red;"></div>
+                <p>Don't have an account? <a href="#" id="registerLink">Register here</a>.</p>
+            </div>
+        
+            <div id="registrationForm" style="display:none;">
+                <h2>Registration</h2>
+                <form id="registrationFormElement">
+                    <label for="regEmail">Email:</label><br>
+                    <input type="email" id="regEmail" name="regEmail" required><br>
+                    <label for="name">Name:</label><br>
+                    <input type="text" id="username" name="name" required><br>
+                    <label for="regPassword">Password:</label><br>
+                    <input type="password" id="regPassword" name="regPassword" required><br>
+                    <label for="confirmPassword">Confirm Password:</label><br>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required><br><br>
+                    <button id="register-button" class="first-button">Submit</button>
+                </form>
+                <div id="registrationError" style="color:red;"></div>
+                <p>Already have an account? <a href="#" id="loginLink">Login here</a>.</p>
+            </div>
+        </div>
+        
+    </section> 
+    <section id="dashboard" class="full-page hidden"> 
+        <header>
+            <h1>Wellcome to Qanda</h1>
+            <button id="create-button" type="button" class="btn btn-outline-light">Create</button>
+            <button id="person-button" type="button" class="btn btn-outline-light">Profile</button>
+            <button id="logout-button" type="button" class="btn btn-outline-light">Logout</button>
+        </header>
+        <main role="main">
+            <!-- app goes here -->
+            <div id="feed-page" class="page"></div>
+            <div id="thread-page" class="page">Thread detail</div>
+            <!-- <div id="user-page" class="page hidden">用户详情页</div> -->
+        </main>
+        <!-- <footer>
+            <p>&copy; lurkforwork.com 2022</p>
+        </footer> -->
+    </section>
+    <section id="create-thread-page" class="full-page hidden">
+        <div id="create-thread-container">
+            <h2>Create New Thread</h2>
+            <form id="create-thread-form">
+                <label for="title">Title:</label><br>
+                <input type="text" id="title" name="title" required><br>
+                <label for="content">Content:</label><br>
+                <textarea id="content" name="content" rows="6" required></textarea><br>
+                <label for="public">Public:</label>
+                <input type="checkbox" id="isPublic" name="public"><br><br>
+                <button id="submit-thread-button">Create Thread</button>
+                <button id="cancel-button">Cancel</button>
+            </form>
+        </div>
+    </section>
+    <section id="edit-thread-page" class="full-page hidden">
+        <div id="edit-thread-container">
+            <h2>Edit Thread</h2>
+            <form id="edit-thread-form">
+                <label for="title">Title:</label><br>
+                <input type="text" id="edit-title" name="title" required><br>
+                <label for="content">Content:</label><br>
+                <textarea id="edit-content" name="content" rows="6" required></textarea><br>
+                <label for="public">Public:</label>
+                <input type="checkbox" id="edit-isPublic" name="public"><br><br>
+                <button id="edit-thread-button">Edit Thread</button>
+                <button id="edit-cancel-button">Cancel</button>
+            </form>
+        </div>
+    </section>
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>
