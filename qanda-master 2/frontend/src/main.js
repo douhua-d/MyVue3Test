@@ -390,6 +390,7 @@ function renderThreads(threads) {
         const formattedDate = createdAt.toLocaleString();
         const dateElement = document.createElement('p');
         dateElement.textContent = `Date: ${formattedDate}`;
+        dateElement.style.cssText = 'font-size:14px;color: #807b7b';
 
         const likesElement = document.createElement('p');
         likesElement.textContent = `Likes: ${thread.likes.length}`;
@@ -1551,6 +1552,11 @@ function getUserProfile (userId = '') {
         // 创建一个 <img> 元素
         const userImageLabel = document.createElement('img');
         userImageLabel.src = profileData.image;
+        userImageLabel.style.cssText = 'width: 60px;\n' +
+            '    height: 60px;\n' +
+            '    border-radius: 50%;\n' +
+            '    border: 1px solid #d3ced8;\n' +
+            '    object-fit: cover;';
         userImageLabel.id = 'userImageLabel';
         userOwnPage.appendChild(userImageLabel);
 
@@ -1596,7 +1602,7 @@ function getUserProfile (userId = '') {
 
         //get user thread
         console.log("storedUserId", storedUserId)
-        getUserThreads(storedUserId);
+        getUserThreads(userId ? userId : storedUserId);
        
     })
     .catch(error => {

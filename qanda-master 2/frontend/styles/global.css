@@ -1,4 +1,9 @@
 /* base styles, feel free to edit */
+
+body {
+    margin: 0;
+}
+
 .full-page {
     display: flex;
     height: 100vh; 
@@ -68,6 +73,8 @@ main {
 #thread-page {
     width: 100%;
     padding: 20px;
+    max-height: 77vh;
+    overflow: auto;
 }
 
 .thread {
@@ -126,6 +133,8 @@ main {
 #user-thread-page {
     width: 100%;
     padding: 20px;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 .commentDetail {
