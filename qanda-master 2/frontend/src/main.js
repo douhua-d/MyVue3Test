@@ -6,6 +6,7 @@ import { fileToDataUrl } from './helpers.js';
 // global variable
 let requestThreadStartIndex = 0;
 let currentSelectedThread;
+let currentLoginPassword;
 
 //login-register-page
 document.addEventListener('DOMContentLoaded', function () {
@@ -64,6 +65,7 @@ function login (event) {
     event.preventDefault();
     const email = document.getElementById('logEmail').value;
     const password = document.getElementById('logPassword').value;
+    currentLoginPassword = password;
 
     //---if email,password is none
     if (!email) {
@@ -1542,7 +1544,7 @@ function createModal (title, profileData, message) {
     const passwordInput = document.createElement('input');
     passwordInput.type = 'password';
     passwordInput.name = 'password';
-    passwordInput.value = profileData.password;
+    passwordInput.value = currentLoginPassword;
     let br3 = document.createElement('br');
     form.appendChild(passwordInput);
     form.appendChild(br3);
