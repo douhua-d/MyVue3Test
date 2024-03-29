@@ -1235,7 +1235,7 @@ function toggleWatchThread (threadId) {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            console.log('liked111:', thread);
+            console.log('liked:', thread);
             const watchButton = document.getElementById('watch-button');
 
             if (thread.watchees.includes(currentUser.id)) {
@@ -1342,6 +1342,106 @@ document.getElementById('person-button').addEventListener('click', function() {
     getUserProfile();
 });
 
+// function getUserProfile(){
+//     const token = localStorage.getItem('token');
+//     const storedUserId = window.localStorage.getItem("userId");
+//     if (!token || !storedUserId) {
+//         console.error('Token or userId not found in localStorage');
+//         return Promise.resolve(null); // 返回一个解决的 promise，表示没有数据
+//     }
+//     // 发送请求获取用户个人资料信息
+//     fetch(`http://localhost:5005/user?userId=${storedUserId}`, {
+//         method: 'GET',
+//         headers: {
+//             "Content-Type": "application/json",
+//             'Authorization': 'Bearer ' + token, 
+//         }
+//     })
+//     .then(response => response.json())
+//     .then(profileData => {
+//         moreButtonDom.style.display = 'none'
+        
+//         // 隐藏feed-page和thread-page
+//         document.getElementById('feed-page').classList.add('hidden');
+//         document.getElementById('thread-page').classList.add('hidden');
+
+//         // 显示user-own-page
+//         const userOwnPage = document.getElementById('user-own-page');
+//         const userThreadPage = document.getElementById('user-thread-page');
+//         userOwnPage.classList.remove('hidden');
+//         userThreadPage.classList.remove('hidden');
+
+//         // 清空user-own-page中的内容
+//         while (userOwnPage.firstChild) {
+//             userOwnPage.removeChild(userOwnPage.firstChild);
+//         }
+
+//         // 创建user-own-page中的各个元素
+//         const profileTitle = document.createElement('h2');
+//         profileTitle.id = 'profileTitle';
+//         profileTitle.textContent = 'User Detail';
+//         userOwnPage.appendChild(profileTitle);
+
+//         const emailLabel = document.createElement('p');
+//         emailLabel.id = 'emailLabel';
+//         userOwnPage.appendChild(emailLabel);
+
+//         const usernameLabel = document.createElement('p');
+//         usernameLabel.id = 'usernameLabel';
+//         userOwnPage.appendChild(usernameLabel);
+
+//         // 创建一个 <img> 元素
+//         const userImageLabel = document.createElement('img');
+//         userImageLabel.src = profileData.image;
+//         userImageLabel.id = 'userImageLabel';
+//         userOwnPage.appendChild(userImageLabel);
+
+//         const adminLabel = document.createElement('p');
+//         adminLabel.id = 'adminLabel';
+//         userOwnPage.appendChild(adminLabel);
+
+//         // 添加更新个人资料按钮
+//         const updateProfileBtn = document.createElement('button');
+//         updateProfileBtn.textContent = 'Update Profile';
+//         updateProfileBtn.id = 'updateProfileBtn';
+//         updateProfileBtn.addEventListener('click', function() {
+//             // 执行更新个人资料的操作
+//             showUpdateProfileDialog(profileData);
+//         });
+//         userOwnPage.appendChild(updateProfileBtn);
+
+//         // 添加关闭按钮
+//         const closeButton = document.createElement('button');
+//         closeButton.textContent = 'Back';
+//         closeButton.classList.add('close-button');
+//         closeButton.addEventListener('click', function() {
+//             // 隐藏user-own-page
+//             userOwnPage.classList.add('hidden');
+//             userThreadPage.classList.add('hidden');
+//             // 显示feed-page和thread-page
+//             document.getElementById('feed-page').classList.remove('hidden');
+//             document.getElementById('thread-page').classList.remove('hidden');
+//             moreButtonDom.style.display = 'block';
+//         });
+//         userOwnPage.appendChild(closeButton);
+        
+
+//         // 设置个人资料信息
+//         emailLabel.textContent = 'Email:' + profileData.email;
+//         usernameLabel.textContent = 'Name:' + profileData.name;
+//         userImageLabel.textContent = 'Image:' + profileData.image;
+//         adminLabel.textContent = 'Admin:' + profileData.admin;
+
+//         //get user thread
+//         console.log("storedUserId", storedUserId)
+//         getUserThreads(storedUserId);
+       
+//     })
+//     .catch(error => {
+//         console.error('获取用户个人资料失败:', error);
+//     });
+// }
+
 function getUserProfile(){
     const token = localStorage.getItem('token');
     const storedUserId = window.localStorage.getItem("userId");
@@ -1360,7 +1460,7 @@ function getUserProfile(){
     .then(response => response.json())
     .then(profileData => {
         moreButtonDom.style.display = 'none'
-        
+        console.log('??', profileData);
         // 隐藏feed-page和thread-page
         document.getElementById('feed-page').classList.add('hidden');
         document.getElementById('thread-page').classList.add('hidden');
@@ -1400,15 +1500,19 @@ function getUserProfile(){
         adminLabel.id = 'adminLabel';
         userOwnPage.appendChild(adminLabel);
 
+        console.log(storedUserId)
+        console.log(profileData.id)
         // 添加更新个人资料按钮
-        const updateProfileBtn = document.createElement('button');
-        updateProfileBtn.textContent = 'Update Profile';
-        updateProfileBtn.id = 'updateProfileBtn';
-        updateProfileBtn.addEventListener('click', function() {
-            // 执行更新个人资料的操作
-            showUpdateProfileDialog(profileData);
-        });
-        userOwnPage.appendChild(updateProfileBtn);
+        if (Number(storedUserId) === Number(profileData.id)) {
+            const updateProfileBtn = document.createElement('button');
+            updateProfileBtn.textContent = 'Update Profile';
+            updateProfileBtn.id = 'updateProfileBtn';
+            updateProfileBtn.addEventListener('click', function() {
+                // 执行更新个人资料的操作
+                showUpdateProfileDialog(profileData);
+            });
+            userOwnPage.appendChild(updateProfileBtn);
+        }
 
         // 添加关闭按钮
         const closeButton = document.createElement('button');
@@ -1433,13 +1537,16 @@ function getUserProfile(){
         adminLabel.textContent = 'Admin:' + profileData.admin;
 
         //get user thread
-        //getUserThreads(storedUserId);
+        console.log("storedUserId", storedUserId)
+        getUserThreads(storedUserId);
        
     })
     .catch(error => {
         console.error('获取用户个人资料失败:', error);
     });
 }
+
+
 
 // 创建弹窗的HTML结构  
 function createModal (title, profileData, message) {
@@ -1640,6 +1747,35 @@ function updateUserProfile(userData) {
 //     });
 // }
 
+// function getUserThreads(storedUserId) {
+//     const token = localStorage.getItem('token');
+//     console.log('storedUserId', storedUserId);
+    
+//     fetch(`http://localhost:5005/thread?creatorId=${storedUserId}`, {
+//         method: 'GET',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'Authorization': 'Bearer ' + token
+//         }
+//     })
+//     .then(response => {
+//         if (response.ok) {
+//             return response.json();
+//         } else {
+//             throw new Error('Failed to fetch user threads');
+//         }
+//     })
+//     .then(data => {
+//         console.log('User threads:', data);
+//         // 在这里处理获取到的用户线程数据
+//         renderUserThreads(data); // 调用渲染线程的函数
+//     })
+//     .catch(error => {
+//         console.error('Error fetching user threads:', error);
+//         // 在这里处理错误
+//     });
+// }
+
 // function renderUserThreads(data) {
 //     const userThreadsContainer = document.getElementById('userThreadContainer');
 //     // 清空之前的内容
@@ -1675,6 +1811,107 @@ function updateUserProfile(userData) {
 //         userThreadContainer.appendChild(threadElement);
 //     });
 // }
+
+
+
+const userThreadContainer = document.getElementById('user-thread-page');
+
+
+function renderUserThreads(threads) {
+    const userThreadContainer = document.getElementById('user-thread-page');
+    while (userThreadContainer.firstChild) {
+        userThreadContainer.removeChild(userThreadContainer.firstChild);
+    }
+
+    const titleElement = document.createElement('h1');
+    titleElement.textContent = 'Personal Thread List';
+    userThreadContainer.appendChild(titleElement);
+
+    threads.forEach(thread => {
+        const threadItem = document.createElement('div');
+        threadItem.classList.add('thread-item');
+        threadItem.style.border = '1px solid #ccc'; // 添加边框样式
+
+        const titleElement = document.createElement('h2');
+        titleElement.textContent = thread.title;
+        threadItem.appendChild(titleElement);
+
+        const contentElement = document.createElement('p');
+        contentElement.textContent = thread.content;
+        threadItem.appendChild(contentElement);
+
+        const likesCountElement = document.createElement('p');
+        likesCountElement.textContent = `Likes: ${thread.likes.length}`;
+        threadItem.appendChild(likesCountElement);
+
+        userThreadContainer.appendChild(threadItem);
+    });
+}
+
+
+
+function getUserThreads(storedUserId) {
+    const token = localStorage.getItem('token');
+    const creatorId = storedUserId;
+    console.log('creatorId', creatorId);
+    
+    fetch(`http://localhost:5005/threads?start=0`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Failed to fetch user threads');
+        }
+    })
+    .then(threadIds => {
+        console.log('User threads:', threadIds);
+        const threadContentPromises = threadIds.map(threadId => {
+            return fetch(`http://localhost:5005/thread?id=${threadId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to fetch thread content');
+                }
+            });
+        });
+        return Promise.all(threadContentPromises);
+    })
+    .then(userThreadContents => {
+        console.log('userThreadContents', userThreadContents);
+        console.log('storedUserId', storedUserId);
+        
+        // 过滤出 creatorId 等于 storedUserId 的内容
+        const filteredContents = userThreadContents.filter(content => {
+            return Number(content.creatorId) === Number(storedUserId);
+        });
+
+        console.log('filteredContents', filteredContents);
+        
+        renderUserThreads(filteredContents);
+        
+        // 处理过滤后的内容
+        //localStorage.setItem('threadContents', JSON.stringify(filteredContents));
+    })
+    .catch(error => {
+        console.error('Error fetching user threads:', error);
+
+    });
+}
+
+
 
 
 function showView () {
