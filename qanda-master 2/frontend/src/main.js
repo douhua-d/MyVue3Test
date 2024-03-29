@@ -373,6 +373,7 @@ function renderThreads(threads) {
 
         const authorElement = document.createElement('h4');
         authorElement.textContent = `Author: ${thread.creator.name}`;
+        authorElement.dataset.creatorid = thread.creatorId;
         authorElement.classList.add('user-link');
         authorElement.addEventListener('mouseover', () => {
             authorElement.style.color = 'blue'; // 鼠标移入时变色
@@ -382,7 +383,7 @@ function renderThreads(threads) {
             authorElement.style.color = 'black'; // 鼠标移出时恢复原色
         });
         authorElement.addEventListener('click', () => {
-            getUserProfile(); // 点击执行getUserProfile()
+            getUserProfile(Number(authorElement.dataset.creatorid)); // 点击执行getUserProfile()
         });
 
         const createdAt = new Date(thread.createdAt);
@@ -1499,7 +1500,7 @@ document.getElementById('person-button').addEventListener('click', function() {
 //     });
 // }
 
-function getUserProfile(){
+function getUserProfile (userId = '') {
     const token = localStorage.getItem('token');
     const storedUserId = window.localStorage.getItem("userId");
     if (!token || !storedUserId) {
@@ -1507,7 +1508,7 @@ function getUserProfile(){
         return Promise.resolve(null); // 返回一个解决的 promise，表示没有数据
     }
     // 发送请求获取用户个人资料信息
-    fetch(`http://localhost:5005/user?userId=${storedUserId}`, {
+    fetch(`http://localhost:5005/user?userId=${userId ? userId : storedUserId}`, {
         method: 'GET',
         headers: {
             "Content-Type": "application/json",
@@ -1900,6 +1901,10 @@ function renderUserThreads(threads) {
         const likesCountElement = document.createElement('p');
         likesCountElement.textContent = `Likes: ${thread.likes.length}`;
         threadItem.appendChild(likesCountElement);
+
+        const commentCountElement = document.createElement('p');
+        commentCountElement.textContent = `commentTotal: ${thread.likes.length}`;
+        threadItem.appendChild(commentCountElement);
 
         userThreadContainer.appendChild(threadItem);
     });
