@@ -6,30 +6,45 @@ import { fileToDataUrl } from './helpers.js';
 // global variable
 let requestThreadStartIndex = 0;
 let currentSelectedThread;
+
 //login-register-page
 document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('registerLink').addEventListener('click', showRegistrationForm);
-    document.getElementById('loginLink').addEventListener('click', showLoginForm);
+    document.getElementById('registerLink').addEventListener('click', function(event) {
+        event.preventDefault(); 
+        window.location.hash = '#/register'; 
+        showRegistrationForm(); 
+    });
 
-    function showRegistrationForm (event) {
-        event.preventDefault();
+    document.getElementById('loginLink').addEventListener('click', function(event) {
+        event.preventDefault(); 
+        window.location.hash = '#/login'; 
+        showLoginForm();
+    });
+
+    if (window.location.hash === '#/register') {
+        showRegistrationForm();
+    } else {
+        showLoginForm();
+    }
+
+    function showRegistrationForm() {
         document.getElementById('loginForm').style.display = 'none';
         document.getElementById('registrationForm').style.display = 'block';
     }
 
-    function showLoginForm (event) {
-        event.preventDefault();
+    function showLoginForm() {
         document.getElementById('registrationForm').style.display = 'none';
         document.getElementById('loginForm').style.display = 'block';
     }
 });
 
-
 //---login function---
 function fetchUserDetails (userId, token) {
     return fetch(`http://localhost:5005/user?userId=${userId}`, {
-        method: 'GET', headers: {
-            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
         }
     })
         .then(response => {
@@ -46,7 +61,6 @@ function fetchUserDetails (userId, token) {
 
 function login (event) {
     clearThreadContainer();
-
     event.preventDefault();
     const email = document.getElementById('logEmail').value;
     const password = document.getElementById('logPassword').value;
@@ -61,15 +75,17 @@ function login (event) {
         alert('Please enter your password.');
         return;
     }
-
     const data = {
-        email, password
+        email,
+        password
     };
 
     fetch('http://localhost:5005/auth/login', {
-        method: 'POST', headers: {
+        method: 'POST',
+        headers: {
             'Content-Type': 'application/json'
-        }, body: JSON.stringify(data)
+        },
+        body: JSON.stringify(data)
     })
         .then(res => {
             if (!res.ok) {
@@ -85,6 +101,7 @@ function login (event) {
             window.localStorage.setItem('token', token);
             const { userId } = data;
             window.localStorage.setItem('userId', userId.toString());
+            
 
             // 调用 fetchUserDetails 函数获取用户详情
             fetchUserDetails(userId, token)
@@ -93,6 +110,7 @@ function login (event) {
                     // 将当前用户详细信息存储到本地存储
                     window.localStorage.setItem('currentUser', JSON.stringify(user));
                     // 在此处处理用户信息
+                    window.location.reload();
                 })
                 .catch(error => {
                     alert('Failed to fetch user details');
@@ -104,81 +122,119 @@ function login (event) {
         });
 }
 
+document.addEventListener('DOMContentLoaded', function() { 
+    showUserName();
+     
+});
+function showUserName(){
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const usernameSpan = document.getElementById('username-placeholder');
+    if (currentUser && currentUser.name) {
+        usernameSpan.textContent = currentUser.name;
+    } else {
+        usernameSpan.textContent = 'Guest';
+    }
+   
+}
+
 //---login button
 const loginBtn = document.getElementById('login-button');
 loginBtn.addEventListener('click', login);
 
 //---register function---
-function register (event) {
+function register(event) {
     event.preventDefault();
-    const email = document.getElementById('regEmail').value;
-    const name = document.getElementById('username').value;
+    const emailInput = document.getElementById('regEmail');
+    const email = emailInput.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address. Example: example@email.com');
+        emailInput.focus(); 
+        return;
+    }
+    const nameInput = document.getElementById('username');
+    const name = nameInput.value.trim();
+    if (!name) { 
+        alert('Please enter your name.');
+        nameInput.focus();
+        return;
+    }
     const password = document.getElementById('regPassword').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
-
-    // 检查密码是否匹配
+    if (password.length < 6) {
+        alert('Password must be at least six characters long.');
+        return;
+    }
     if (password !== confirmPassword) {
         alert('Passwords do not match.');
         return;
     }
-
-    // 构造请求体数据
     const data = {
-        email, name, password, confirmPassword
+        email,
+        name,
+        password,
+        confirmPassword
     };
-
-    // 发送 POST 请求
     fetch('http://localhost:5005/auth/register', {
-        method: 'POST', headers: {
+        method: 'POST',
+        headers: {
             'Content-Type': 'application/json'
-        }, body: JSON.stringify(data)
+        },
+        body: JSON.stringify(data)
     })
-        .then(res => {
-            if (!res.ok) {
+    .then(res => {
+        if (!res.ok) {
+            if (res.status === 400) {
+                throw new Error('Email already exists.');
+            } else {
                 throw new Error('Registration failed.');
             }
-            return res.json();
-        })
-        .then(data => {
-            console.log('Registration success: ', data);
-            alert('Registration successful! You can now log in with your email and password.');
-
-
-        })
-        .catch(error => {
-            console.error('Error:', error);
+        }
+        return res.json();
+    })
+    .then(data => {
+        console.log('Registration success: ', data);
+        alert('Registration successful! You can now log in with your email and password.');
+        emailInput.value = '';
+        nameInput.value = ''; 
+        document.getElementById('regPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+        document.getElementById('registrationForm').style.display = 'none';
+        document.getElementById('loginForm').style.display = 'block';
+        window.location.hash = '#/login'; 
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        if (error.message === 'Email already exists.') {
+            alert('Email already exists. Please use a different email address.');
+        } else {
             alert('Registration failed. Please try again.');
-        });
+        }
+    });
 }
 
 //---register button---
 const registerBtn = document.getElementById('register-button');
 registerBtn.addEventListener('click', register);
 
+
 //---logout function---
-function logout () {
+function logout() {
     const confirmed = confirm('Are you sure you want to log out?');
     if (confirmed) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('userId');
-        localStorage.removeItem('currentUser');
-        localStorage.removeItem('threadDetail');
-        localStorage.removeItem('threadContents');
-
+        localStorage.clear();
         window.location.hash = '#/login';
     }
 }
 
 //---logout button---
 document.getElementById('logout-button').addEventListener('click', logout);
+
 //---logout function end---
 
 
 //----get thread function---
 const threadListContainer = document.getElementById('feed-page');
-
-// const moreButton = document.getElementById("moreButton");
-
 function getThreads (startIndex = 0) {
     if (startIndex === 0) {
         moreButtonDom.style.display = 'block';
@@ -186,12 +242,14 @@ function getThreads (startIndex = 0) {
     const token = localStorage.getItem('token');
     if (!token) {
         console.log('Token not found in localStorage');
-        return; // 如果没有有效的令牌，则不执行后续操作
+        return;
     }
-    // 发送 GET 请求获取线程列表
+
     fetch(`http://localhost:5005/threads?start=${startIndex}`, {
-        method: 'GET', headers: {
-            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
         }
     })
         .then(response => {
@@ -202,37 +260,36 @@ function getThreads (startIndex = 0) {
         })
         .then(threadIds => {
             console.log('Threads:', threadIds);
-
-            // 更新请求的开始索引用于more获取
+            
+            //more
             requestThreadStartIndex = startIndex + 5;
             if (!threadIds.length) {
                 window.alert('no more data');
                 moreButtonDom.style.display = 'none';
             }
 
-            // 用Promise.all发送请求获取所有线程的内容
             const threadContentPromises = threadIds.map(threadId => {
                 return fetch(`http://localhost:5005/thread?id=${threadId}`, {
-                    method: 'GET', headers: {
-                        'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
                     }
                 });
             });
-
-            // 等待所有线程内容请求完成
             return Promise.all(threadContentPromises);
         })
         .then(responses => Promise.all(responses.map(response => response.json())))
         .then(threadContents => {
             console.log('Thread content:', threadContents);
             localStorage.setItem('threadContents', JSON.stringify(threadContents));
-            // 获取所有创建者的ID
             const creatorIds = threadContents.map(thread => thread.creatorId);
-            // 获取所有用户的详情
             const userDetailPromises = creatorIds.map(creatorId => {
                 return fetch(`http://localhost:5005/user?userId=${creatorId}`, {
-                    method: 'GET', headers: {
-                        'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
                     }
                 }).then(response => response.json());
             });
@@ -250,10 +307,7 @@ function getThreads (startIndex = 0) {
                 thread.creator = userDetailMap[thread.creatorId];
             });
             console.log(threadContents);
-            // 渲染线程内容到页面上
             renderThreads(threadContents, userDetails);
-
-            // 选中当前列表的第一项&展示该项详情
             selectFirstThread();
         })
         .catch(error => {
@@ -261,58 +315,41 @@ function getThreads (startIndex = 0) {
         });
 }
 
-// 渲染线程列表的函数
+
 function renderThreads (threads) {
-    // 遍历每个线程并创建线程元素
     threads.forEach(thread => {
         const threadElement = document.createElement('div');
         threadElement.classList.add('thread');
         threadElement.dataset.threadid = thread.id;
 
-        // 创建线程标题元素
         const titleElement = document.createElement('h3');
         titleElement.textContent = `${thread.title}`;
-        // 点击线程标题时显示详情
 
-
-        // 创建作者和发布日期元素
         const infoElement = document.createElement('p');
         const createdAt = new Date(thread.createdAt);
         const formattedDate = createdAt.toLocaleString();
         infoElement.textContent = `Author: ${thread.creator.name}  ${formattedDate}`;
 
-
-        // 创建点赞数元素
         const likesElement = document.createElement('p');
         likesElement.textContent = `Likes: ${thread.likes.length}`;
 
-        // 将标题、作者、发布日期和点赞数添加到线程元素中
         threadElement.appendChild(titleElement);
         threadElement.appendChild(infoElement);
         threadElement.appendChild(likesElement);
 
-        // 将线程元素添加到线程列表容器中
         threadListContainer.appendChild(threadElement);
 
-        // 点击事件监听器
         threadElement.addEventListener('click', () => {
-            // 清除其他线程的选中状态
             const allThreads = document.querySelectorAll('.thread');
             allThreads.forEach(item => {
                 item.classList.remove('selected');
             });
 
-            // 添加选中状态到当前线程
             threadElement.classList.add('selected');
-
             currentSelectedThread = thread.id;
-            // 显示线程详情
-            showThreadDetail(thread.id); // 传递 threadId
+            showThreadDetail(thread.id); 
 
-            // getThreadComments(thread.id);  
         });
-
-        // 创建并添加分隔线
         const separator = document.createElement('hr');
         threadListContainer.appendChild(separator);
 
@@ -331,8 +368,10 @@ function showThreadDetail (threadId) {
     }
 
     fetch(`http://localhost:5005/thread?id=${threadId}`, {
-        method: 'GET', headers: {
-            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
         }
     })
         .then(response => {
@@ -343,12 +382,12 @@ function showThreadDetail (threadId) {
         })
         .then(thread => {
             console.log('threadDetail', thread);
-
-            // 如果创建者详情不存在，则获取创建者详情
             if (!thread.creator) {
                 return fetch(`http://localhost:5005/user?userId=${thread.creatorId}`, {
-                    method: 'GET', headers: {
-                        'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
                     }
                 }).then(response => {
                     if (!response.ok) {
@@ -356,9 +395,7 @@ function showThreadDetail (threadId) {
                     }
                     return response.json();
                 }).then(creator => {
-                    // 填充 thread 对象的 creator 属性
                     thread.creator = creator;
-                    // 存储 thread 对象的 threadDetail 到 localStorage 中
                     window.localStorage.setItem('threadDetail', JSON.stringify(thread));
 
                     return thread;
@@ -368,12 +405,9 @@ function showThreadDetail (threadId) {
             }
         })
         .then(thread => {
-            // 渲染线程详情
             renderThreadDetail(thread);
-
-            //检查当前用户是否是线程的管理员或创建者，如果是，则显示编辑按钮
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            console.log('当前用户信息:', currentUser); // 添加此行以检查当前用户信息是否正确加载
+            console.log('user detail:', currentUser); 
             console.log('current id', currentUser.id);
             console.log('thread creator id', thread.creatorId);
 
@@ -381,31 +415,24 @@ function showThreadDetail (threadId) {
                 const editButton = document.createElement('button');
                 editButton.textContent = 'Edit';
                 editButton.id = 'edit-button';
-                editButton.classList.remove('hidden'); // 默认隐藏编辑按钮
+                editButton.classList.remove('hidden'); 
 
                 const deleteButton = document.createElement('button');
                 deleteButton.textContent = 'Delete';
                 deleteButton.id = 'delete-button';
-                deleteButton.classList.remove('hidden'); // 默认隐藏删除按钮
+                deleteButton.classList.remove('hidden');
 
-                // 将编辑按钮添加到页面上
                 const threadPage = document.getElementById('thread-page');
                 threadPage.appendChild(editButton);
                 threadPage.appendChild(deleteButton);
 
-                // 给编辑按钮添加点击事件监听器
                 editButton.addEventListener('click', () => {
-                    // 显示编辑页面
                     window.location.hash = '#/edit-thread';
-                    // 填充编辑表单内容
                     fillEditForm(thread);
                 });
-                // 给删除按钮添加点击事件监听器
                 deleteButton.addEventListener('click', () => {
-                    // 显示确认弹窗
                     const confirmDelete = confirm('Are you sure you want to delete this thread?');
                     if (confirmDelete) {
-                        // 用户点击确认后，执行删除线程的操作
                         deleteThread(thread.id);
                     }
                 });
@@ -418,13 +445,11 @@ function showThreadDetail (threadId) {
             likeButton.id = 'like-button';
             const threadPage = document.getElementById('thread-page');
             threadPage.appendChild(likeButton);
-
             if (thread.likes.includes(currentUser.id)) {
                 likeButton.textContent = 'Unlike';
                 likeButton.classList.add('liked');
             }
 
-            // 给喜欢按钮添加点击事件监听器
             likeButton.addEventListener('click', () => {
                 toggleLikeThread(threadId);
             });
@@ -440,18 +465,15 @@ function showThreadDetail (threadId) {
                 watchButton.classList.add('watched');
             }
 
-            // 给喜欢按钮添加点击事件监听器
             watchButton.addEventListener('click', () => {
                 toggleWatchThread(threadId);
             });
 
-            // 渲染评论区域
             const commentSection = document.createElement('div');
             commentSection.classList.add('comment-section');
             commentSection.setAttribute('id', 'comment-section');
             threadPage.appendChild(commentSection);
 
-            // 渲染新评论输入框和评论按钮
             const newCommentInput = document.createElement('textarea');
             newCommentInput.placeholder = 'Add a new comment';
             newCommentInput.id = 'newCommentInput';
@@ -460,16 +482,13 @@ function showThreadDetail (threadId) {
             const commentButton = document.createElement('button');
             commentButton.textContent = 'Comment';
             commentSection.appendChild(commentButton);
-
-            // 添加评论按钮点击事件处理程序
             commentButton.addEventListener('click', () => {
                 const commentContent = document.getElementById('newCommentInput').value;
                 if (commentContent !== '') {
-                    postComment(thread.id); // 调用 postComment 函数提交评论
-                    newCommentInput.value = ''; // 清空输入框内容
+                    postComment(thread.id); 
+                    newCommentInput.value = ''; 
                 }
             });
-
             getThreadComments(threadId);
         })
         .catch(error => {
@@ -485,8 +504,10 @@ function getThreadComments (threadId) {
         return;
     }
     fetch(`http://localhost:5005/comments?threadId=${threadId}`, {
-        method: 'GET', headers: {
-            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
         }
     })
         .then(response => {
@@ -498,9 +519,7 @@ function getThreadComments (threadId) {
         .then(comments => {
             const allComments = comments;
             comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            // 过滤非子评论
             comments = comments.filter(item => !item.parentCommentId);
-            // 遍历评论列表，并将每条评论显示在页面上
             console.log('comments', comments);
             comments.forEach(comment => {
                 console.log('comment id', comment);
@@ -547,7 +566,7 @@ function getThreadComments (threadId) {
                 const commentLikeBtn = document.createElement('button');
                 const currentUser = JSON.parse(localStorage.getItem('currentUser'));
                 commentLikeBtn.textContent = 'Like';
-                commentLikeBtn.classList.add('commentLikeBtn'); // 将类名修改为 'commentLikeBtn'
+                commentLikeBtn.classList.add('commentLikeBtn');
                 commentLikeBtn.setAttribute('id', `like${comment.id}`);
                 commentDetail.appendChild(commentLikeBtn);
                 if (comment.likes.includes(currentUser.id)) {
@@ -607,12 +626,13 @@ function getThreadComments (threadId) {
                             if (confirmed) {
                                 deleteComment(threadId, commentId);
                             } else {
-                                // 用户取消了操作
                                 console.log('Deletion canceled by user.');
                             }
                         });
                     }
                 });
+
+                renderCommentChildren(currentCommentChildren, commentDetail);
 
 
                 const commentForCommentBtn = document.createElement('button');
@@ -629,13 +649,14 @@ function getThreadComments (threadId) {
                     editCommentBtn.classList.remove('hidden');
                 }
 
-                renderCommentChildren(currentCommentChildren, commentDetail);
+                
             });
         }).catch(error => {
         console.error('Error loading threads:', error);
     });
 }
 
+// for comment children 
 function renderCommentChildren (currentCommentChildren, parentCommentDetail) {
     currentCommentChildren.forEach(comment => {
         const commentListContainer = document.createElement('div');
@@ -661,10 +682,6 @@ function renderCommentChildren (currentCommentChildren, parentCommentDetail) {
         const createdAtSpan = document.createElement('span');
         createdAtSpan.setAttribute('id', `comment-createdAt-${comment.id}`);
         createdAtSpan.textContent = calculateTimeAgo(comment.createdAt);
-
-        // const commentLikeNum = document.createElement('p');
-        // commentLikeNum.textContent = `Likes:${comment.likes.length}`;
-
         commentDetail.appendChild(commentAutor);
         commentDetail.appendChild(commentContent);
         commentDetail.appendChild(createdAtSpan);
@@ -677,36 +694,57 @@ function renderCommentChildren (currentCommentChildren, parentCommentDetail) {
 
 }
 
-//
-function handleCommentForComment (threadId, parentCommentId, commentDetail, commentForCommentBtn) {
+function handleCommentForComment(threadId, parentCommentId, commentDetail, commentForCommentBtn) {
     const cloneCommentForCommentBtn = commentForCommentBtn.cloneNode(true);
+
+    const commentContainer = document.createElement('div');
+    commentContainer.style.display = 'flex';
+
     const newCommentInput = document.createElement('textarea');
     newCommentInput.placeholder = 'Add a new comment';
-    newCommentInput.style.cssText = 'position: absolute; left: 330px;; top: 180px';
-    commentDetail.style.position = 'relative';
-    commentDetail.appendChild(newCommentInput);
+    newCommentInput.style.marginRight = '10px';
+    commentContainer.appendChild(newCommentInput);
 
     const confirmButton = document.createElement('button');
     confirmButton.textContent = 'confirmAdd';
-    commentForCommentBtn.parentNode.replaceChild(confirmButton, commentForCommentBtn);
+    confirmButton.style.marginRight = '10px';
     confirmButton.addEventListener('click', () => {
         postComment(threadId, newCommentInput.value, parentCommentId);
         setTimeout(() => {
             confirmButton.parentNode.replaceChild(cloneCommentForCommentBtn, confirmButton);
+            commentContainer.parentNode.removeChild(commentContainer);
         });
     });
+    commentContainer.appendChild(confirmButton);
+
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'cancel';
+    cancelButton.style.marginRight = '10px';
+    cancelButton.addEventListener('click', () => {
+        // 移除输入框和按钮
+        commentContainer.parentNode.removeChild(commentContainer);
+        // 将原始的“回复评论”按钮恢复显示
+        commentForCommentBtn.style.display = 'inline-block';
+    });
+    commentContainer.appendChild(cancelButton);
+
+    commentDetail.appendChild(commentContainer);
+
+    // 隐藏原始的“回复评论”按钮
+    commentForCommentBtn.style.display = 'none';
 }
 
 function getCreatorName (creatorId) {
     const token = localStorage.getItem('token');
     if (!token) {
         console.error('Token not found in localStorage');
-        return Promise.resolve(null); // 返回一个解决的 promise，表示没有数据
+        return Promise.resolve(null); 
     }
-
     return fetch(`http://localhost:5005/user?userId=${creatorId}`, {
-        method: 'GET', headers: {
-            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
         }
     })
         .then(response => {
@@ -716,57 +754,25 @@ function getCreatorName (creatorId) {
             return response.json();
         })
         .then(userData => {
-            return userData.name; // 返回用户名称
+            return userData.name;
         })
         .catch(error => {
             console.error('Error fetching user data:', error);
-            return null; // 或者你可以抛出一个异常，具体取决于你的需求
+            return null; 
         });
 }
 
-
-// function deleteComment(threadId){
-//     const deleteCommentBtns = document.querySelectorAll('.deleteCommentBtn');
-//     console.log('delete', deleteCommentBtns.length); // 输出 NodeList 的长度
-//     console.log('delete', deleteCommentBtns); // 输出 NodeList 中的元素
-
-//     deleteCommentBtns.forEach(btn => {
-//         btn.addEventListener('click', function() {
-//             const commentId = parseInt(btn.id.slice(1)); // 在这里引用 btn
-//             console.log('commentId', commentId)
-//             const token = localStorage.getItem('token');
-//             fetch('http://localhost:5005/comment', {
-//                 method: 'DELETE',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                     'Authorization': 'Bearer ' + token
-//                 },
-//                 body: JSON.stringify({ "id": commentId})
-//             })
-//             .then(response => {
-//                 if (!response.ok) {
-//                     throw new Error('Network response was not ok');
-//                 }
-//                 console.log('Comment deleted successfully');
-//                 getThreadComments(threadId);
-//             })
-//             .catch(error => {
-//                 console.error('There was a problem with the fetch operation:', error);
-//             });
-//         });
-//     });
-// }
-
-
-// 渲染线程详情的函数
 
 function deleteComment (threadId, commentId) {
     console.log('commentId', commentId);
     const token = localStorage.getItem('token');
     fetch('http://localhost:5005/comment', {
-        method: 'DELETE', headers: {
-            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
-        }, body: JSON.stringify({ 'id': commentId })
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ 'id': commentId })
     })
         .then(response => {
             if (!response.ok) {
@@ -780,59 +786,6 @@ function deleteComment (threadId, commentId) {
             console.error('There was a problem with the fetch operation:', error);
         });
 }
-
-
-// //like comment
-// function likeComment(threadId, commentId, commentLike) {
-//     console.log('commentId', commentId);
-//     const token = localStorage.getItem('token');
-//     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-//     if (!token) {
-//         console.error('Token not found in localStorage');
-//         return;
-//     }
-
-//     fetch(`http://localhost:5005/comment/like`, {
-//         method: 'PUT',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'Authorization': 'Bearer ' + token
-//         },
-//         body: JSON.stringify({ id: commentId, turnon: !commentLike.includes(currentUser.id) }) // 添加了 userId
-//     })
-//     .then(response => {
-//         if (!response.ok) {
-//             throw new Error('Network response was not ok');
-//         }
-//         return response.json();
-//     })
-//     .then(data => {
-//         // 更新本地存储中的评论信息
-//         const comments = JSON.parse(localStorage.getItem('comments'));
-//         if (!comments || !Array.isArray(comments)) {
-//             console.error('Comments array is null or not an array');
-//             return;
-//         }
-//         const commentIndex = comments.findIndex(comment => comment.id === commentId);
-//         if (commentIndex !== -1) {
-//             // 更新评论的喜欢状态
-//             if (data.liked) {
-//                 comments[commentIndex].likes.push(currentUser.id);
-//             } else {
-//                 const index = comments[commentIndex].likes.indexOf(currentUser.id);
-//                 if (index !== -1) {
-//                     comments[commentIndex].likes.splice(index, 1);
-//                 }
-//             }
-//             localStorage.setItem('comments', JSON.stringify(comments));
-//         }
-//         // 更新界面
-//         getThreadComments();
-//         showCommentDetail(threadId, commentId);
-//     })
-
-// }
 
 
 function likeComment (threadId, commentId, commentLikes) {
@@ -849,9 +802,12 @@ function likeComment (threadId, commentId, commentLikes) {
     const likeButton = document.getElementById(`like${commentId}`);
 
     fetch(`http://localhost:5005/comment/like`, {
-        method: 'PUT', headers: {
-            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
-        }, body: JSON.stringify({ id: commentId, turnon: !isLiked }) // 添加了 userId
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ id: commentId, turnon: !isLiked })
     })
         .then(response => {
             if (!response.ok) {
@@ -861,11 +817,9 @@ function likeComment (threadId, commentId, commentLikes) {
         })
         .then(data => {
             if (!isLiked) {
-                // 如果评论之前未被喜欢，将按钮文本设置为“Unlike”
                 likeButton.textContent = 'like';
                 likeButton.classList.remove('liked');
             } else {
-                // 如果评论之前已被喜欢，将按钮文本设置为“Like”
                 likeButton.textContent = 'unLike';
                 likeButton.classList.add('liked');
             }
@@ -878,30 +832,6 @@ function likeComment (threadId, commentId, commentLikes) {
 }
 
 
-// function editComment(threadId, commentId, commentContent) {
-//     const thread = JSON.parse(localStorage.getItem('threadDetail'));
-//     const token = localStorage.getItem('token');
-//     if (!token) {
-//         console.error('Token not found in localStorage');
-//         return;
-//     }
-
-//     fetch('http://localhost:5005/comment', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'Authorization': 'Bearer ' + token
-//         },
-//         body: JSON.stringify( {"id": commentId, "content" = })
-//     })
-//     .then(response => {
-//         if (!response.ok) {
-//             throw new Error('Network response was not ok');
-//         }
-//         return response.json();
-//     })
-// }
-
 function postEditComment (data) {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -909,9 +839,12 @@ function postEditComment (data) {
         return;
     }
     return fetch(`http://localhost:5005/comment`, {
-        method: 'PUT', headers: {
-            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
-        }, body: JSON.stringify(data)
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify(data)
     }).then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -927,7 +860,7 @@ function postEditComment (data) {
 function editComment (threadId, commentId, commentContent) {
     const commentContentDom = document.getElementById(`comment-content-${commentId}`);
     const commentCreatedAtDom = document.getElementById(`comment-createdAt-${commentId}`);
-    // 渲染编辑评论输入框和评论按钮
+
     const editCommentInput = document.createElement('textarea');
     editCommentInput.placeholder = 'Edit a new comment';
     editCommentInput.id = 'editCommentInput';
@@ -944,66 +877,49 @@ function editComment (threadId, commentId, commentContent) {
 
 }
 
-
 //---render thread detail---
 function renderThreadDetail (thread) {
     const threadPage = document.getElementById('thread-page');
 
-    // 清空 thread-page 的内容
     while (threadPage.firstChild) {
         threadPage.removeChild(threadPage.firstChild);
     }
 
-    // 创建线程详情元素
     const threadElement = document.createElement('div');
     threadElement.classList.add('thread-detail');
 
-    // 创建线程标题元素
     const titleElement = document.createElement('h1');
     titleElement.textContent = `${thread.title}`;
     threadElement.appendChild(titleElement);
 
-    // 创建作者和发布日期元素
     const infoElement = document.createElement('p');
     const createdAt = new Date(thread.createdAt);
     const formattedDate = createdAt.toLocaleString();
     infoElement.textContent = `Author: ${thread.creator.name}  ${formattedDate}`;
     threadElement.appendChild(infoElement);
 
-    // 创建内容元素
     const contentElement = document.createElement('p');
     contentElement.textContent = thread.content;
     threadElement.appendChild(contentElement);
 
-    // 创建点赞数元素
     const likesElement = document.createElement('p');
     likesElement.textContent = `Likes: ${thread.likes.length}`;
     threadElement.appendChild(likesElement);
 
-    // 将线程详情元素添加到 thread-page 中
     threadPage.appendChild(threadElement);
 }
 
-// 更多按钮点击事件处理程序
-// moreButton.addEventListener("click", function() {
-//     // 获取当前已加载的线程数量
-//     const currentThreadsCount = threadListContainer.querySelectorAll('.thread').length;
-//     // 加载更多线程
-//     getThreads(currentThreadsCount);
-// });
-
-// 清空线程容器
+// clear thread container
 function clearThreadContainer () {
     const threadContainer = document.getElementById('feed-page');
-    // 循环删除所有子节点
     while (threadContainer.firstChild) {
         threadContainer.removeChild(threadContainer.firstChild);
     }
 }
 
+// clear thread detail container
 function clearThreadDetailContainer () {
     const threadDetailContainer = document.getElementById('thread-page');
-    // 循环删除所有子节点
     while (threadDetailContainer.firstChild) {
         threadDetailContainer.removeChild(threadDetailContainer.firstChild);
     }
@@ -1018,7 +934,6 @@ createButton.addEventListener('click', function () {
 
 //---create function---
 function createThread (data) {
-    console.log('清空完成');
     if (!data.title || data.title.trim() === '') {
         alert('Title cannot be empty.');
         return;
@@ -1030,9 +945,12 @@ function createThread (data) {
     }
 
     fetch('http://localhost:5005/thread', {
-        method: 'POST', headers: {
-            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
-        }, body: JSON.stringify(data)
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify(data)
     })
         .then(response => {
             if (!response.ok) {
@@ -1042,14 +960,13 @@ function createThread (data) {
         })
         .then(data => {
             console.log('Thread created success:', data);
-            // 在这里执行一些操作，比如更新界面等
-            document.getElementById('title').value = ''; // 清空标题输入框
-            document.getElementById('content').value = ''; // 清空内容输入框
-            document.getElementById('isPublic').checked = false; // 清空内容输入框
+            document.getElementById('title').value = ''; 
+            document.getElementById('content').value = ''; 
+            document.getElementById('isPublic').checked = false; 
 
             window.location.href = '#/dashboard';
-            clearThreadContainer();
             getThreads();
+            window.location.reload();
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -1060,14 +977,16 @@ function createThread (data) {
 //---create & cancel button---
 document.getElementById('submit-thread-button').addEventListener('click', function (event) {
 
-    event.preventDefault(); // 阻止表单默认提交行为
+    event.preventDefault(); 
 
     const title = document.getElementById('title').value;
     const content = document.getElementById('content').value;
-    const isPublic = document.getElementById('isPublic').checked; // 获取 checkbox 的状态
+    const isPublic = document.getElementById('isPublic').checked; 
 
     const threadData = {
-        title: title, isPublic: isPublic, content: content
+        title: title,
+        isPublic: isPublic,
+        content: content
     };
 
     createThread(threadData);
@@ -1111,14 +1030,16 @@ function updateThread (threadId, updatedData) {
         title: updatedData.title,
         content: updatedData.content,
         isPublic: updatedData.isPublic,
-        lock: thread.lock // 设置锁定属性的值，根据需要更改
+        lock: thread.lock 
     };
 
     fetch(`http://localhost:5005/thread?id=${threadId}`, {
-        method: 'PUT', // 使用 PUT 方法更新线程
+        method: 'PUT',
         headers: {
-            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
-        }, body: JSON.stringify(requestBody) // 更新后的线程内容
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify(requestBody) 
     })
         .then(response => {
             if (!response.ok) {
@@ -1128,11 +1049,10 @@ function updateThread (threadId, updatedData) {
         })
         .then(data => {
             console.log('Thread updated successfully:', data);
-            // 在这里执行一些操作，比如更新界面等
             showThreadDetail(threadId);
-            // window.location.hash = "#/dashboard"; // 编辑成功后跳转到仪表板页面
+
             setTimeout(() => {
-                window.location.hash = '#/dashboard'; // 编辑成功后跳转到仪表板页面
+                window.location.hash = '#/dashboard'; 
             }, 100);
         })
         .catch(error => {
@@ -1141,11 +1061,10 @@ function updateThread (threadId, updatedData) {
 }
 
 document.getElementById('edit-thread-button').addEventListener('click', function (event) {
-    event.preventDefault(); // 阻止表单默认提交行为
+    event.preventDefault(); 
 
-    // 从页面中获取线程信息，这里假设您从某个地方获取了 thread 对象
     const thread = JSON.parse(localStorage.getItem('threadDetail'));
-    const threadId = thread.id; // 使用线程对象的ID
+    const threadId = thread.id; 
 
     const updatedData = {
         title: document.getElementById('edit-title').value,
@@ -1153,17 +1072,15 @@ document.getElementById('edit-thread-button').addEventListener('click', function
         isPublic: document.getElementById('edit-isPublic').checked
     };
 
-    // 在这里传递线程ID和更新后的数据
     updateThread(threadId, updatedData);
 });
 
 document.getElementById('edit-cancel-button').addEventListener('click', function () {
     clearThreadContainer();
     clearFillEditForm();
-    // 延迟一小段时间后再跳转到仪表板页面
     setTimeout(function () {
         window.location.hash = '#/dashboard';
-    }, 100); // 可以根据需要调整延迟的时间
+    }, 100); 
 });
 //----edit funtion end---
 
@@ -1174,26 +1091,26 @@ function deleteThread (threadId) {
     console.log('show', threadId);
     const token = localStorage.getItem('token');
     fetch(`http://localhost:5005/thread?id=${threadId}`, {
-        method: 'DELETE', headers: {
-            'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'
-        }, // 如果需要发送请求体，确保它的格式正确
-        body: JSON.stringify({ id: threadId }) // 例如，将线程ID作为对象的属性发送
+        method: 'DELETE',
+        headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id: threadId }) 
     })
         .then(response => {
             if (response.ok) {
-                // 成功删除线程后重定向到线程列表中最新的单个线程帖子
-
                 window.location.href = '#/dashboard';
                 getThreads();
                 // 在获取线程列表后，显示第一个线程的内容
                 setTimeout(() => {
-                    const threads = JSON.parse(localStorage.getItem('threadContents')); // 获取线程列表
+                    const threads = JSON.parse(localStorage.getItem('threadContents'));
                     console.log('thread给我看看', threads);
                     if (threads && threads.length > 0) {
-                        const latestThreadId = threads[0].id; // 获取最新线程的ID
-                        showThreadDetail(latestThreadId); // 显示最新线程的内容
+                        const latestThreadId = threads[0].id; 
+                        showThreadDetail(latestThreadId); 
                     }
-                }, 500); // 等待一小段时间以确保线程列表已经更新
+                }, 500); 
 
 
             } else {
@@ -1205,19 +1122,16 @@ function deleteThread (threadId) {
         });
 }
 
-// 刷新后选中当前列表的第一项&展示该项详情
+// refresh then show the first thread
 function selectFirstThread () {
     const allThreads = document.querySelectorAll('.thread');
-    // 清除其他线程的选中状态
     allThreads.forEach(item => {
         item.classList.remove('selected');
     });
     const firstElement = allThreads[0];
-    // 添加选中状态到当前线程
     firstElement.classList.add('selected');
     const threadId = firstElement.dataset.threadid;
     currentSelectedThread = threadId;
-    // 显示线程详情
     showThreadDetail(threadId);
 }
 
@@ -1246,9 +1160,12 @@ function toggleLikeThread (threadId) {
     }
 
     fetch(`http://localhost:5005/thread/like`, {
-        method: 'PUT', headers: {
-            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
-        }, body: JSON.stringify({ id: threadId, turnon: !thread.likes.includes(currentUser.id) })
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ id: threadId, turnon: !thread.likes.includes(currentUser.id) })
     })
         .then(response => {
             if (!response.ok) {
@@ -1305,9 +1222,12 @@ function toggleWatchThread (threadId) {
     }
 
     fetch(`http://localhost:5005/thread/watch`, {
-        method: 'PUT', headers: {
-            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
-        }, body: JSON.stringify({ id: threadId, turnon: !thread.watchees.includes(currentUser.id) })
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ id: threadId, turnon: !thread.watchees.includes(currentUser.id) })
     })
         .then(response => {
             if (!response.ok) {
@@ -1352,7 +1272,9 @@ function toggleWatchThread (threadId) {
 function postComment (threadId, content, parentCommentId = null) {
     const commentContent = document.getElementById('newCommentInput').value;
     const commentData = {
-        'content': commentContent, 'threadId': threadId, 'parentCommentId': null
+        'content': commentContent,
+        'threadId': threadId,
+        'parentCommentId': null
     };
 
     // 评论的评论内容
@@ -1368,9 +1290,12 @@ function postComment (threadId, content, parentCommentId = null) {
         return;
     }
     fetch('http://localhost:5005/comment', {
-        method: 'POST', headers: {
-            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
-        }, body: JSON.stringify(commentData) // 将评论数据作为请求体
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify(commentData) 
     })
         .then(response => {
             if (!response.ok) {
@@ -1409,102 +1334,110 @@ function calculateTimeAgo (timestamp) {
     }
 }
 
-function getUserProfile () {
+
+// user part
+document.getElementById('person-button').addEventListener('click', function() {
+    getUserProfile();
+});
+
+function getUserProfile(){
     const token = localStorage.getItem('token');
-    const storedUserId = window.localStorage.getItem('userId');
+    const storedUserId = window.localStorage.getItem("userId");
     if (!token || !storedUserId) {
         console.error('Token or userId not found in localStorage');
         return Promise.resolve(null); // 返回一个解决的 promise，表示没有数据
     }
     // 发送请求获取用户个人资料信息
     fetch(`http://localhost:5005/user?userId=${storedUserId}`, {
-        method: 'GET', headers: {
-            'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer ' + token, 
         }
     })
-        .then(response => response.json())
-        .then(profileData => {
-            moreButtonDom.style.display = 'none';
+    .then(response => response.json())
+    .then(profileData => {
+        moreButtonDom.style.display = 'none'
+        
+        // 隐藏feed-page和thread-page
+        document.getElementById('feed-page').classList.add('hidden');
+        document.getElementById('thread-page').classList.add('hidden');
 
-            // 隐藏feed-page和thread-page
-            document.getElementById('feed-page').classList.add('hidden');
-            document.getElementById('thread-page').classList.add('hidden');
+        // 显示user-own-page
+        const userOwnPage = document.getElementById('user-own-page');
+        const userThreadPage = document.getElementById('user-thread-page');
+        userOwnPage.classList.remove('hidden');
+        userThreadPage.classList.remove('hidden');
 
-            // 显示user-own-page
-            const userOwnPage = document.getElementById('user-own-page');
-            const userThreadPage = document.getElementById('user-thread-page');
-            userOwnPage.classList.remove('hidden');
-            userThreadPage.classList.remove('hidden');
+        // 清空user-own-page中的内容
+        while (userOwnPage.firstChild) {
+            userOwnPage.removeChild(userOwnPage.firstChild);
+        }
 
-            // 清空user-own-page中的内容
-            while (userOwnPage.firstChild) {
-                userOwnPage.removeChild(userOwnPage.firstChild);
-            }
+        // 创建user-own-page中的各个元素
+        const profileTitle = document.createElement('h2');
+        profileTitle.id = 'profileTitle';
+        profileTitle.textContent = 'User Detail';
+        userOwnPage.appendChild(profileTitle);
 
-            // 创建user-own-page中的各个元素
-            const profileTitle = document.createElement('h2');
-            profileTitle.id = 'profileTitle';
-            profileTitle.textContent = 'User Detail';
-            userOwnPage.appendChild(profileTitle);
+        const emailLabel = document.createElement('p');
+        emailLabel.id = 'emailLabel';
+        userOwnPage.appendChild(emailLabel);
 
-            const emailLabel = document.createElement('p');
-            emailLabel.id = 'emailLabel';
-            userOwnPage.appendChild(emailLabel);
+        const usernameLabel = document.createElement('p');
+        usernameLabel.id = 'usernameLabel';
+        userOwnPage.appendChild(usernameLabel);
 
-            const usernameLabel = document.createElement('p');
-            usernameLabel.id = 'usernameLabel';
-            userOwnPage.appendChild(usernameLabel);
+        // 创建一个 <img> 元素
+        const userImageLabel = document.createElement('img');
+        userImageLabel.src = profileData.image;
+        userImageLabel.id = 'userImageLabel';
+        userOwnPage.appendChild(userImageLabel);
 
-            const userImageLabel = document.createElement('p');
-            userImageLabel.id = 'userImageLabel';
-            userOwnPage.appendChild(userImageLabel);
+        const adminLabel = document.createElement('p');
+        adminLabel.id = 'adminLabel';
+        userOwnPage.appendChild(adminLabel);
 
-            const adminLabel = document.createElement('p');
-            adminLabel.id = 'adminLabel';
-            userOwnPage.appendChild(adminLabel);
-
-            // 添加更新个人资料按钮
-            const updateProfileBtn = document.createElement('button');
-            updateProfileBtn.textContent = 'Update Profile';
-            updateProfileBtn.id = 'updateProfileBtn';
-            updateProfileBtn.addEventListener('click', function () {
-                // 执行更新个人资料的操作
-                showUpdateProfileDialog(profileData);
-            });
-            userOwnPage.appendChild(updateProfileBtn);
-
-            // 添加关闭按钮
-            const closeButton = document.createElement('button');
-            closeButton.textContent = 'Back';
-            closeButton.classList.add('close-button');
-            closeButton.addEventListener('click', function () {
-                // 隐藏user-own-page
-                userOwnPage.classList.add('hidden');
-                userThreadPage.classList.add('hidden');
-                // 显示feed-page和thread-page
-                document.getElementById('feed-page').classList.remove('hidden');
-                document.getElementById('thread-page').classList.remove('hidden');
-                moreButtonDom.style.display = 'block';
-            });
-            userOwnPage.appendChild(closeButton);
-
-
-            // 设置个人资料信息
-            emailLabel.textContent = 'Email:' + profileData.email;
-            usernameLabel.textContent = 'Name:' + profileData.name;
-            userImageLabel.textContent = 'Image:' + profileData.image;
-            userImageLabel.textContent = 'Admin:' + profileData.admin;
-
-        })
-        .catch(error => {
-            console.error('获取用户个人资料失败:', error);
+        // 添加更新个人资料按钮
+        const updateProfileBtn = document.createElement('button');
+        updateProfileBtn.textContent = 'Update Profile';
+        updateProfileBtn.id = 'updateProfileBtn';
+        updateProfileBtn.addEventListener('click', function() {
+            // 执行更新个人资料的操作
+            showUpdateProfileDialog(profileData);
         });
-}
+        userOwnPage.appendChild(updateProfileBtn);
 
-// user部分
-document.getElementById('person-button').addEventListener('click',
-    getUserProfile()
-);
+        // 添加关闭按钮
+        const closeButton = document.createElement('button');
+        closeButton.textContent = 'Back';
+        closeButton.classList.add('close-button');
+        closeButton.addEventListener('click', function() {
+            // 隐藏user-own-page
+            userOwnPage.classList.add('hidden');
+            userThreadPage.classList.add('hidden');
+            // 显示feed-page和thread-page
+            document.getElementById('feed-page').classList.remove('hidden');
+            document.getElementById('thread-page').classList.remove('hidden');
+            moreButtonDom.style.display = 'block';
+        });
+        userOwnPage.appendChild(closeButton);
+        
+
+        // 设置个人资料信息
+        emailLabel.textContent = 'Email:' + profileData.email;
+        usernameLabel.textContent = 'Name:' + profileData.name;
+        userImageLabel.textContent = 'Image:' + profileData.image;
+        adminLabel.textContent = 'Admin:' + profileData.admin;
+
+        //get user thread
+        //getUserThreads(storedUserId);
+       
+    })
+    .catch(error => {
+        console.error('获取用户个人资料失败:', error);
+    });
+}
 
 // 创建弹窗的HTML结构  
 function createModal (title, profileData, message) {
@@ -1535,13 +1468,13 @@ function createModal (title, profileData, message) {
     modalContent.appendChild(titleElement);
 
     const closeButton = document.createElement('button');
-    closeButton.textContent = '取消';
+    closeButton.textContent = 'cancel';
     closeButton.addEventListener('click', () => {
         modal.remove();
     });
 
     const confirmButton = document.createElement('button');
-    confirmButton.textContent = '确定';
+    confirmButton.textContent = 'finish';
     confirmButton.addEventListener('click', () => {
         alert('Are you sure modify ?');
         console.log(imageInput.files[0]);
@@ -1580,8 +1513,6 @@ function createModal (title, profileData, message) {
         }
     });
 
-    // const messageElement = document.createElement('p');
-    // messageElement.textContent = message;
 
     // 创建表单元素
     const form = document.createElement('form');
@@ -1637,106 +1568,34 @@ function createModal (title, profileData, message) {
 
 function showUpdateProfileDialog (profileData) {
     console.log({ profileData });
-    const message = '这是一个带有取消和确定按钮的自定义弹窗！';
+    const message = 'pop';
     createModal('Modify user information', profileData, message);
 }
 
-// function showUpdateProfileDialog(profileData) {
-//     // 创建对话框元素
-//     const dialog = document.createElement('div');
-//     dialog.classList.add('update-profile-dialog');
-
-//     // 创建表单元素
-//     const form = document.createElement('form');
-//     form.addEventListener('submit', function(event) {
-//         event.preventDefault(); // 阻止默认提交行为
-//     });
-
-//     // 创建电子邮件地址输入框
-//     const emailInput = document.createElement('input');
-//     emailInput.type = 'email';
-//     emailInput.name = 'email';
-//     emailInput.value = profileData.email;
-//     form.appendChild(emailInput);
-
-//     // 创建密码输入框
-//     const passwordInput = document.createElement('input');
-//     passwordInput.type = 'password';
-//     passwordInput.name = 'password';
-//     passwordInput.value = profileData.password;
-//     form.appendChild(passwordInput);
-
-//     // 创建姓名输入框
-//     const nameInput = document.createElement('input');
-//     nameInput.type = 'text';
-//     nameInput.name = 'name';
-//     nameInput.value = profileData.name;
-//     form.appendChild(nameInput);
-
-//     // 创建图像上传输入框
-//     const imageInput = document.createElement('input');
-//     imageInput.type = 'file';
-//     imageInput.name = 'image';
-//     form.appendChild(imageInput);
-
-//     // 创建确认按钮
-//     const submitButton = document.createElement('button');
-//     submitButton.textContent = 'Confirm';
-//     submitButton.addEventListener('click', function() {
-//         const updatedData = new FormData(); // 创建 FormData 对象
-//         updatedData.append('email', emailInput.value);
-//         updatedData.append('password', passwordInput.value);
-//         updatedData.append('name', nameInput.value);
-//         updatedData.append('image', imageInput.files[0]); // 添加图像文件到 FormData
-
-//         // 调用更新个人资料函数
-//         updateUserProfile(updatedData)
-//             .then(() => {
-//                 // 更新成功后的操作，例如关闭对话框或刷新页面
-//                 dialog.remove(); // 关闭对话框
-//             })
-//             .catch(error => {
-//                 console.error('Failed to update profile:', error);
-//                 // 处理更新失败的情况
-//             });
-//     });
-//     form.appendChild(submitButton);
-
-//     // 创建取消按钮
-//     const cancelButton = document.createElement('button');
-//     cancelButton.textContent = 'Cancel';
-//     cancelButton.addEventListener('click', function() {
-//         dialog.remove(); // 关闭对话框
-//     });
-//     form.appendChild(cancelButton);
-//     // 将表单添加到对话框中
-//     dialog.appendChild(form);
-
-//     // 将对话框添加到页面中
-//     document.body.appendChild(dialog);
-// }
 
 // 更新用户个人资料的函数
-function updateUserProfile (userData) {
+function updateUserProfile(userData) {
     const token = localStorage.getItem('token');
-    const userId = window.localStorage.getItem('userId');
     if (!token) {
         console.error('Token not found in localStorage');
         return Promise.resolve(null);
     }
-
     return fetch(`http://localhost:5005/user`, {
         method: 'PUT',
         headers: {
-            'Authorization': 'Bearer ' + token
+            'Content-Type': 'application/json', // 确保请求体是 JSON 格式
+            'Authorization': 'Bearer ' + token // 包含正确的授权信息
         },
-        body: JSON.stringify(userData)
+        body: JSON.stringify(userData) // 包含要更新的用户数据
     })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Failed to update user profile');
+                
             }
+            getUserProfile();
             console.log('User profile updated successfully');
+            
             return response.json();
         })
         .catch(error => {
@@ -1746,49 +1605,78 @@ function updateUserProfile (userData) {
 }
 
 
-// function getUserThread(){
-//     const token = localStorage.getItem('token');
-//     const userId = window.localStorage.getItem("userId");
 
-//     fetch(`http://localhost:5005/thread?creatorId=${userId}`, {
-//     method: 'PUT',
-//     headers: {
-//         'Content-Type': 'application/json',
-//         'Authorization': 'Bearer ' + token
-//     },
-//     body: JSON.stringify({ })
-// })
+// get user thread detail
+// const userThreadContainer = document.getElementById('user-thread-page');
+
+// function getUserThreads(storedUserId) {
+//     const token = localStorage.getItem('token');
+//     console.log('storedUserId', storedUserId);
+    
+//     fetch(`http://localhost:5005/thread?creatorId=${storedUserId}`, {
+//         method: 'GET',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'Authorization': 'Bearer ' + token
+//         }
+//     })
+//     .then(response => {
+//         if (response.ok) {
+//             return response.json();
+//         } else {
+//             throw new Error('Failed to fetch user threads');
+//         }
+//     })
+//     .then(data => {
+//         console.log('User threads:', data);
+//         // 在这里处理获取到的用户线程数据
+//         renderUserThreads(data); // 调用渲染线程的函数
+//     })
+//     .catch(error => {
+//         console.error('Error fetching user threads:', error);
+//         // 在这里处理错误
+//     });
 // }
 
-function getUserThreads () {
-    const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
+// function renderUserThreads(data) {
+//     const userThreadsContainer = document.getElementById('userThreadContainer');
+//     // 清空之前的内容
+//     while (userThreadsContainer.firstChild) {
+//         userThreadsContainer.removeChild(userThreadsContainer.firstChild);
+//     }
 
-    fetch(`http://localhost:5005/thread?creatorId=${userId}`, {
-        method: 'GET', headers: {
-            'Authorization': 'Bearer ' + token
-        }
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Failed to fetch user threads');
-            }
-        })
-        .then(data => {
-            console.log('User threads:', data);
-            // 在这里处理获取到的用户线程数据
-        })
-        .catch(error => {
-            console.error('Error fetching user threads:', error);
-            // 在这里处理错误
-        });
-}
+//     data.forEach(thread => {
+//         // 创建线程容器
+//         const threadElement = document.createElement('div');
+//         threadElement.classList.add('user-thread');
+
+//         // 创建用于显示线程信息的元素
+//         const titleElement = document.createElement('h2');
+//         titleElement.textContent = `标题：${thread.title}`;
+
+//         const contentElement = document.createElement('p');
+//         contentElement.textContent = `内容：${thread.content}`;
+
+//         const likesCountElement = document.createElement('span');
+//         likesCountElement.textContent = `点赞数：${thread.likes}`;
+
+//         const commentsCountElement = document.createElement('span');
+//         commentsCountElement.textContent = `评论数：${thread.comments.length}`;
+
+//         // 将元素添加到线程容器中
+//         threadElement.appendChild(titleElement);
+//         threadElement.appendChild(contentElement);
+//         threadElement.appendChild(likesCountElement);
+//         threadElement.appendChild(commentsCountElement);
+
+//         // 将线程容器添加到用户线程容器中
+//         userThreadContainer.appendChild(threadElement);
+//     });
+// }
+
 
 function showView () {
     const hash = window.location.hash;
-    // 根据哈希值来切换视图
     switch (hash) {
         case '#/login':
             document.getElementById('login-register-page').classList.remove('hidden');
@@ -1808,9 +1696,9 @@ function showView () {
                 document.getElementById('dashboard').classList.remove('hidden');
                 document.getElementById('create-thread-page').classList.add('hidden');
                 document.getElementById('edit-thread-page').classList.add('hidden');
-                getThreads(); // 只有当用户已登录时才加载线程列表
+                getThreads();
             } else {
-                window.location.hash = '#/login'; // 如果用户未登录，则重定向到登录页面
+                window.location.hash = '#/login'; 
             }
             break;
 
@@ -1827,13 +1715,11 @@ function showView () {
             document.getElementById('edit-thread-page').classList.remove('hidden');
             break;
         default:
-            // default page => login
             window.location.hash = '#/login';
             break;
 
     }
 }
 
-// 在页面加载时和哈希变化时调用showView函数
 window.addEventListener('load', showView);
 window.addEventListener('hashchange', showView);
