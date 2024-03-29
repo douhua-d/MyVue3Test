@@ -318,7 +318,51 @@ function getThreads (startIndex = 0) {
 }
 
 
-function renderThreads (threads) {
+// function renderThreads(threads) {
+//     threads.forEach(thread => {
+//         const threadElement = document.createElement('div');
+//         threadElement.classList.add('thread');
+//         threadElement.dataset.threadid = thread.id;
+
+//         const titleElement = document.createElement('h3');
+//         titleElement.textContent = `${thread.title}`;
+
+//         const authorElement = document.createElement('h4');
+//         authorElement.textContent = `Author: ${thread.creator.name}`;
+
+//         const createdAt = new Date(thread.createdAt);
+//         const formattedDate = createdAt.toLocaleString();
+//         const dateElement = document.createElement('p');
+//         dateElement.textContent = `Date: ${formattedDate}`;
+
+//         const likesElement = document.createElement('p');
+//         likesElement.textContent = `Likes: ${thread.likes.length}`;
+
+//         threadElement.appendChild(titleElement);
+//         threadElement.appendChild(authorElement);
+//         threadElement.appendChild(dateElement);
+//         threadElement.appendChild(likesElement);
+
+//         threadListContainer.appendChild(threadElement);
+
+//         threadElement.addEventListener('click', () => {
+//             const allThreads = document.querySelectorAll('.thread');
+//             allThreads.forEach(item => {
+//                 item.classList.remove('selected');
+//             });
+
+//             threadElement.classList.add('selected');
+//             currentSelectedThread = thread.id;
+//             showThreadDetail(thread.id); 
+
+//         });
+//         const separator = document.createElement('hr');
+//         threadListContainer.appendChild(separator);
+
+//     });
+// }
+
+function renderThreads(threads) {
     threads.forEach(thread => {
         const threadElement = document.createElement('div');
         threadElement.classList.add('thread');
@@ -327,16 +371,31 @@ function renderThreads (threads) {
         const titleElement = document.createElement('h3');
         titleElement.textContent = `${thread.title}`;
 
-        const infoElement = document.createElement('p');
+        const authorElement = document.createElement('h4');
+        authorElement.textContent = `Author: ${thread.creator.name}`;
+        authorElement.classList.add('user-link');
+        authorElement.addEventListener('mouseover', () => {
+            authorElement.style.color = 'blue'; // 鼠标移入时变色
+            authorElement.style.cursor = 'pointer'; // 鼠标移入时显示手型
+        });
+        authorElement.addEventListener('mouseout', () => {
+            authorElement.style.color = 'black'; // 鼠标移出时恢复原色
+        });
+        authorElement.addEventListener('click', () => {
+            getUserProfile(); // 点击执行getUserProfile()
+        });
+
         const createdAt = new Date(thread.createdAt);
         const formattedDate = createdAt.toLocaleString();
-        infoElement.textContent = `Author: ${thread.creator.name}  ${formattedDate}`;
+        const dateElement = document.createElement('p');
+        dateElement.textContent = `Date: ${formattedDate}`;
 
         const likesElement = document.createElement('p');
         likesElement.textContent = `Likes: ${thread.likes.length}`;
 
         threadElement.appendChild(titleElement);
-        threadElement.appendChild(infoElement);
+        threadElement.appendChild(authorElement);
+        threadElement.appendChild(dateElement);
         threadElement.appendChild(likesElement);
 
         threadListContainer.appendChild(threadElement);
@@ -356,11 +415,9 @@ function renderThreads (threads) {
         threadListContainer.appendChild(separator);
 
     });
-
-
 }
 
-// get thread detail function
+
 
 function showThreadDetail (threadId) {
     const token = localStorage.getItem('token');
@@ -1814,7 +1871,7 @@ function updateUserProfile(userData) {
 
 
 
-const userThreadContainer = document.getElementById('user-thread-page');
+//const userThreadContainer = document.getElementById('user-thread-page');
 
 
 function renderUserThreads(threads) {
