@@ -19,7 +19,7 @@ class myPromise {
         if (this.PromiseState === myPromise.PENDING) {
             setTimeout(() => {
                 this.PromiseState = myPromise.FULFILLED;
-                this.PromiseState = result;
+                this.PromiseResult = result;
                 this.onFulfilledCallbacks.forEach(callback => {
                     callback(result);
                 });
