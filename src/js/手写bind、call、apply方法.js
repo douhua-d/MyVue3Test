@@ -13,6 +13,19 @@ Function.prototype.myBind = function(context) {
   };
 };
 
+Function.prototype.myBind = function(context, ...args1) {
+  if (typeof this !== "function") {
+    throw new Error("type error");
+  }
+  let fn = this;
+  return function bound(...args2) {
+    if (this instanceof bound) {
+      return new fn(...args1, ...args2);
+    }
+    return fn.apply(context, [...args2, ...args2]);
+  };
+};
+
 
 // 改变了 this 指向，让新的对象可以执行该函数。那么思路是否可以变成给新的对象添加一个函数，然后在执行完以后删除？
 
