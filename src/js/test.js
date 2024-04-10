@@ -213,3 +213,94 @@ function solve (root) {
     return result;
 }
 
+
+// 并发控制
+function limit (count, array, iterateFunc) {
+    const tasks = [];
+    const doingTasks = [];
+    let i = 0;
+    const enqueue = () => {
+        if (i === array.length) {
+            return Promise.resolve();
+        }
+        const task = Promise.resolve().then(() => iterateFunc(array[i++]));
+        tasks.push(task);
+        const doing = task.then(() => doingTasks.splice(doingTasks.indexOf(task), 1));
+        doingTasks.push(doing);
+        const res = doingTasks.length >= count ? Promise.race(doingTasks) : Promise.resolve();
+        return res.then(enqueue);
+    };
+    return enqueue().then(() => Promise.all(tasks));
+}
+
+const timeout = i => new Promise(resolve => setTimeout(() => {
+    resolve(i);
+}, i));
+
+
+// 实现防抖
+// 不是立即执行的
+function debounce (fn, delay) {
+    let timer = null;
+    return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            fn.apply(this, args);
+        }, delay);
+    };
+}
+
+// 可以控制是否立即执行
+function debounce2 (fn, delay, flag = false) {
+    let timer = null;
+    return function (...args) {
+        if (flag && !timer) {
+            fn.apply(this, args);
+        }
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            fn.apply(this, args);
+        }, delay);
+    };
+}
+
+
+// 实现节流
+function throttle (fn, delay) {
+    let previous = 0;
+    return function (...args) {
+        if (Date.now() - previous > delay) {
+            previous = Date.now();
+            fn.apply(this, args);
+        }
+    };
+}
+
+function throttle2 (fn, delay) {
+    let timer = null;
+    return function (...args) {
+        if (!timer) {
+            timer = setTimeout(() => {
+                clearTimeout(timer);
+                fn.apply(this, args);
+            }, delay);
+        }
+    };
+}
+
+function throttle3 (fn, delay) {
+    let previous = 0;
+    let timer = null;
+    return function (...args) {
+        if (Date.now() - previous > delay) {
+            previous = Date.now();
+            clearTimeout(timer);
+            fn.apply(this, args);
+        } else if (!timer) {
+            timer = setTimeout(() => {
+                fn.apply(this, args);
+            }, delay);
+        }
+    };
+
+}
