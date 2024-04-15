@@ -325,3 +325,89 @@ function lengthLongestStr(s) {
   }
   return maxLength;
 }
+
+// 实现每隔一秒打印1234
+for (let i = 1; i < 5; i++) {
+  setTimeout(() => {
+    console.log(i);
+  }, i * 1000);
+}
+
+// 判断括号字符是否有效  
+function isValid(s) {
+  if (s.length % 2 === 1) {
+    return false;
+  }
+  const regObj = {
+    "(": ")",
+    "{": "}",
+    "[": "]"
+  };
+  const stack = [];
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === "(" || s[i] === "{" || s[i] === "[") {
+      stack.push(s[i]);
+    } else {
+      if (regObj[stack.pop()] !== s[i]) {
+        return false;
+      }
+    }
+  }
+
+  if (stack.length > 0) return false;
+  return true;
+}
+
+console.log(123, isValid("()"));
+console.log(isValid("()[]{}"));
+console.log(isValid("(]"));
+
+// 实现  promise.all
+
+Promise.myAll = function(iterator) {
+  let count = 0;
+  let len = iterator.length;
+  let res = [];
+  return new Promise((resolve, reject) => {
+    for (let i in iterator) {
+      Promise.resolve(iterator[i]).then((val) => {
+        count++;
+        res[i] = val;
+        if (count === len) {
+          resolve(res);
+        }
+      }).catch(e => {
+        reject(e);
+      });
+    }
+  });
+
+
+};
+
+// let arr1 = [1, 2, 3];
+// for (let i in arr1) {
+//   console.log("for in 数组", i);  // 0 1 2
+// }
+
+
+// 查找数组公共前缀
+function longestCommonStr(strs) {
+  const firstStr = strs[0];
+  let res = "";
+  if (!strs.length) {
+    return false;
+  }
+  for (let i = 0; i < firstStr.length; i++) {
+    for (let j = 1; j < strs.length; j++) {
+      if (firstStr[i] !== strs[j][i]) {
+        return res;
+      }
+    }
+    res += firstStr[i];
+  }
+  return res;
+}
+
+// console.log(longestCommonPrefix(["flower", "flow", "flight"]));
+// console.log(longestCommonPrefix(["java", "javascript", "json"]));

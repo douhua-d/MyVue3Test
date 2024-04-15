@@ -1,17 +1,19 @@
 // https://www.cnblogs.com/echolun/p/12178655.html
-Function.prototype.myBind = function(context) {
-  if (typeof this !== "function") {
-    throw new Error("error");
-  }
-  let _this = this;
-  let args = [...arguments].slice(1);
-  return function bound() {
-    if (this instanceof bound) {
-      return new _this(...args, ...arguments);
-    }
-    return _this.apply(context, args.concat(arguments));
-  };
-};
+
+
+// Function.prototype.myBind = function(context) {
+//   if (typeof this !== "function") {
+//     throw new Error("error");
+//   }
+//   let _this = this;
+//   let args = [...arguments].slice(1);
+//   return function bound() {
+//     if (this instanceof bound) {
+//       return new _this(...args, ...arguments);
+//     }
+//     return _this.apply(context, args.concat(arguments));
+//   };
+// };
 
 Function.prototype.myBind = function(context, ...args1) {
   if (typeof this !== "function") {
