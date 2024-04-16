@@ -1,4 +1,4 @@
-let vnode = {
+export let vnode = {
   tag: "DIV",
   attrs: {
     id: "app"
@@ -43,7 +43,7 @@ function render(vnode, container) {
 }
 
 // 真正的渲染函数
-function _render(vnode) {
+export function _render(vnode) {
   // 如果是数字类型转化为字符串
   if (typeof vnode === "number") {
     vnode = String(vnode);

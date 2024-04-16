@@ -411,3 +411,60 @@ function longestCommonStr(strs) {
 
 // console.log(longestCommonPrefix(["flower", "flow", "flight"]));
 // console.log(longestCommonPrefix(["java", "javascript", "json"]));
+
+
+// 实现发布订阅者模式
+class EventEmitter {
+  constructor() {
+    this.events = {};
+  }
+
+  on(type, fn) {
+    if (this.events[type]) {
+      this.events[type].push(fn);
+    } else {
+      this.events[type] = [fn];
+    }
+  }
+
+  off(type, fn) {
+    if (!this.events[type]) return;
+    this.events[type] = this.events[type].filter(item => item !== fn);
+  }
+
+  once(type, fn) {
+    function func() {
+      fn();
+      this.off(type, fn);
+    }
+
+    this.on(type, func);
+  }
+
+  emit(type, ...args) {
+    this.events[type] && this.events[type].forEach(fn => {
+      fn(...args);
+    });
+  }
+}
+
+// 将虚拟dom转化为真实dom
+function render(vnode) {
+  if (typeof vnode === "number") {
+    vnode = String(vnode);
+  }
+  if (typeof vnode === "string") {
+    return document.createTextNode(vNode);
+  }
+  const dom = document.createElement(vNode.tag);
+  if (vnode.attrs) {
+    Object.keys(vnode.attrs).forEach(key => {
+      let value = vnode.attrs[key];
+      dom.setAttribute(key, value);
+    });
+  }
+  if (vnode.children) {
+    vnode.children.forEach(child => dom.appendChild(_render(child)));
+  }
+  return dom;
+}

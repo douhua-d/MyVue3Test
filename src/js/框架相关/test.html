@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script type="module">
+  import { _render, vnode } from './将虚拟 Dom 转化为真实 Dom.js';
+
+  console.log(_render(vnode));
+
+  let dom1 = document.createTextNode('124');
+
+  console.log(dom1);
+
+  document.body.appendChild(dom1);
+
+</script>
+</body>
+</html>
