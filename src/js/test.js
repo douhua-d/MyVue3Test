@@ -468,3 +468,5 @@ function render(vnode) {
   }
   return dom;
 }
+
+let io = new IntersectionObserver(callback, option);
