@@ -9,10 +9,10 @@
  5、将a插入到4布中元素后
 
  while (j >= 0 && arr[j] > arr[i]) {  // 这样是错误的！！！ arr[i]的位置元素变化了，必须借助中间变量保存一份才可
-      arr[j + 1] = arr[j];
-      j--;
-      console.log(arr[i]);
-    }
+ arr[j + 1] = arr[j];
+ j--;
+ console.log(arr[i]);
+ }
  arr[j + 1] = arr[i];
  */
 
@@ -65,6 +65,6 @@ let colors = ["red", "green", "black"];
 console.log("11", colors.entries()); // 11 Object [Array Iterator] {}
 for (let i of colors.entries()) {
   console.log(i, "iiiiiii"); //[ 0, 'red' ] 'iiiiiii'
-                              // [ 1, 'green' ] 'iiiiiii'
-                              //  [ 2, 'black' ] 'iiiiiii'
+  // [ 1, 'green' ] 'iiiiiii'
+  //  [ 2, 'black' ] 'iiiiiii'
 }
