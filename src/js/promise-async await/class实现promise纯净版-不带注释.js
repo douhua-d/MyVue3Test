@@ -48,7 +48,7 @@ class myPromise {
             if (this.PromiseState === myPromise.FULFILLED) {
                 setTimeout(() => {
                     try {
-                        onFulfilled(this.PromiseState);
+                        onFulfilled(this.PromiseResult);
                     } catch (e) {
                         reject(e);
                     }
