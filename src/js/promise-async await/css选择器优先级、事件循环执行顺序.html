@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Specificity</title>
+  <style>
+    /* ID 选择器 */
+    #unique {
+      color: blue; /* 优先级 (0, 1, 0, 0) */
+    }
+
+    /* 20 个类选择器 */
+    .class1.class2.class3.class4.class5.class6.class7.class8.class9.class10
+    .class11.class12.class13.class14.class15.class16.class17.class18.class19.class20 {
+      color: red; /* 优先级 (0, 0, 20, 0) */
+    }
+  </style>
+</head>
+<body>
+
+
+<div id="unique" class="class1 class2 class3 class4 class5 class6 class7 class8 class9 class10
+        class11 class12 class13 class14 class15 class16 class17 class18 class19 class20">
+  This text will be blue because the ID selector has a higher specificity.
+</div>
+</body>
+
+
+<script>
+
+  /**
+   * 即使有20个类选择器，它们的优先级 (0, 0, 20, 0) 仍然低于一个ID选择器的优先级 (0, 1, 0, 0)。
+   * 因此，一个ID选择器的样式会覆盖任意数量的类选择器的样式。
+   */
+
+
+  /**
+   * 微任务的入队时机
+   * Promise：当一个Promise被resolve或reject时，其回调函数会被添加到微任务队列中。
+   *
+   * process.nextTick（Node.js）：立即将任务添加到微任务队列中，比其他微任务具有更高的优先级。
+   *
+   * setTimeout 和 setInterval：在指定的延迟时间到达后，将回调函数添加到宏任务队列中。
+   */
+
+
+  console.log('start');
+
+  setTimeout(() => {
+    console.log('macro task 1');
+  }, 0);
+
+  Promise.resolve().then(() => {
+    console.log('micro task 1');
+  }).then(() => {
+    console.log('micro task 2');
+    Promise.resolve().then(() => {
+      console.log('micro task 3');
+    });
+  });
+
+  setTimeout(() => {
+    console.log('macro task 2');
+  }, 0);
+
+  console.log('end');
+
+
+  /**
+   * 执行顺序解析：
+   *
+   * 执行同步代码，输出start。
+   * setTimeout回调被添加到宏任务队列。
+   * Promise.resolve().then回调被添加到微任务队列。
+   * setTimeout回调被添加到宏任务队列。
+   * 执行同步代码，输出end。
+   * 执行微任务队列：
+   * 输出micro task 1。
+   * 输出micro task 2，并将新微任务micro task 3添加到微任务队列。
+   * 执行并输出micro task 3。
+   * 执行宏任务队列：
+   * 输出macro task 1。
+   * 输出macro task 2。
+   */
+</script>
+</html>
