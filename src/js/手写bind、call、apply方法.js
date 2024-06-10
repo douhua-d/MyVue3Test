@@ -24,7 +24,7 @@ Function.prototype.myBind = function(context, ...args1) {
     if (this instanceof bound) {
       return new fn(...args1, ...args2);
     }
-    return fn.apply(context, [...args2, ...args2]);
+    return fn.apply(context, [...args1, ...args2]);
   };
 };
 
