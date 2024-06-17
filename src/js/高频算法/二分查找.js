@@ -1,3 +1,5 @@
+// 二分查找
+
 function search(arr, target, start, end) {
   let targetIndex = -1;
 

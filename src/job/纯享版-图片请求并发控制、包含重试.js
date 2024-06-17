@@ -30,7 +30,7 @@ class ImageLoader {
 
   next() {
     if (this.currentCount === 0 && this.urls.length === 0) {
-      // 记得 return
+      // 记得 return  todo
       return this.resolve(this.results);
     }
 
