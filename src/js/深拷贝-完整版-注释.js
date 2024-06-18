@@ -1,3 +1,6 @@
+
+let date = new Date();
+console.log(123,date.__proto__.constructor);
 function cloneDeep (target) {
     const map = new WeakMap();
 
