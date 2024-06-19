@@ -1,6 +1,7 @@
 //https://www.jianshu.com/p/90b6280dd1b6
 //https://blog.csdn.net/lianjiuxiao/article/details/116260070
 
+//  实现  promise.all
 Promise.myAll = function(iterator) {
   let count = 0;
   let len = iterator.length;
