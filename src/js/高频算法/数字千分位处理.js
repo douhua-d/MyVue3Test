@@ -4,9 +4,11 @@ function formatNumber(number) {
   if (typeof number !== "number") {
     return;
   }
-  // 类型转换
+  // 类型转换  数字转为字符串、然后才能用 split 方法
   number += "";
   let [interger, decimal] = number.split(".");
+
+  console.log("333",interger,decimal);
 
   // console.log(interger.split(""), decimal);
 

@@ -21,11 +21,11 @@ function search(arr, target, start, end) {
   }
 }
 
-// const dataArr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-// const position = search(dataArr, 6, 0, dataArr.length - 1);
-// if (position !== -1) {
-//   console.log(`目标元素在数组中的位置:${position}`);
-// } else {
-//   console.log("目标元素不在数组中");
-// }
+const dataArr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const position = search(dataArr, 10, 0, dataArr.length - 1);
+if (position !== -1) {
+  console.log(`目标元素在数组中的位置:${position}`);
+} else {
+  console.log("目标元素不在数组中");
+}
  
