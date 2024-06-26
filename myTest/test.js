@@ -1,34 +1,21 @@
-const obj = { a: 1, b: 3 };
+class AgeCalc {
+  constructor(windowSize) {
+    this.windowSize = windowSize;
+    this.ageVals = [];
+    this.currentSum = 0;
+  }
 
-obj.c = "gsg ";
-console.log(obj);
+  addAge(age) {
+    this.ageVals.push(age);
+    this.currentSum += age;
 
-const arr = [4, "gh"];
-arr.splice(1);
-
-console.log(arr);
-
-const arr = 1;
-
-function fetchWithRetries(url, retries = 3) {
-  return new Promise((resolve, reject) => {
-    function attemptFetch(remainingRetries) {
-      fetch(url).then(response => {
-        if (!response.ok) {
-          throw new Error("网络请求错误");
-        }
-        return response.json();
-      }).then(data => {
-        resolve(data);
-      }).catch(err => {
-        if (remainingRetries) {
-          attemptFetch(remainingRetries - 1);
-        } else {
-          reject("重试三次失败");
-        }
-      });
+    if (this.ageVals.length > this.windowSize) {
+      let oldAge = this.ageVals.shift();
+      this.currentSum -= oldAge;
     }
 
-    attemptFetch(retries);
-  });
+    const averageAge = this.currentSum / this.windowSize;
+    return averageAge;
+  }
+
 }
