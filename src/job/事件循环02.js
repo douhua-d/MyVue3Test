@@ -6,8 +6,8 @@ setTimeout(() => {
 
 Promise.resolve().then(() => {
   console.log('promise1');
-  // return Promise.resolve();
-  return Promise.reject();
+  return Promise.resolve();
+  // return Promise.reject();
 }).then(() => {
   console.log('promise2');
 }).catch(err => {

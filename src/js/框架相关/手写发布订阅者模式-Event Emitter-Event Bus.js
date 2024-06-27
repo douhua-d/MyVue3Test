@@ -7,7 +7,7 @@ class EventEmitter {
     if (this.events[type]) {
       this.events[type].push({ fn, isOnce });
     } else {
-      this.events[type] = [];
+      this.events[type] = [{ fn, isOnce }];
     }
   }
 
