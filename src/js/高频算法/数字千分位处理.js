@@ -1,5 +1,7 @@
 // https://juejin.cn/post/7347154070539518002
 // 1,234,567 国外标准货币表达方式 
+
+// 数字千分位
 function formatNumber(number) {
   if (typeof number !== "number") {
     return;
@@ -40,3 +42,15 @@ console.log(formatNumber(12345.6789)); // 12,345.678,9
 
 console.log([123456].join(), [123456].join(""));
 console.log("123456".split(), "123456".split(""));
+
+
+// 使用 正则表达式  正向先行断言
+
+// 12345
+// let reg = /(?=(\d{3})+$)/g
+
+// console.log(1111111111,"123456".replace(reg, ','));
+
+let reg = /(?!^)(?=(\d{3})+$)/g
+
+console.log(1111111111,"123456".replace(reg, ','));

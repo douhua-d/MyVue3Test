@@ -1,21 +1,17 @@
-class AgeCalc {
-  constructor(windowSize) {
-    this.windowSize = windowSize;
-    this.ageVals = [];
-    this.currentSum = 0;
-  }
-
-  addAge(age) {
-    this.ageVals.push(age);
-    this.currentSum += age;
-
-    if (this.ageVals.length > this.windowSize) {
-      let oldAge = this.ageVals.shift();
-      this.currentSum -= oldAge;
+function findMaxCharAndCount(str) {
+  let map = {};
+  let maxChar = "";
+  let maxCount = 0;
+  for (let char of str) {
+    map[char] = (map[char] || 0) + 1;
+    if (map[char] > maxCount) {
+      maxCount = map[char];
+      maxChar = char;
     }
-
-    const averageAge = this.currentSum / this.windowSize;
-    return averageAge;
   }
-
+  return { maxChar, maxCount };
 }
+
+const exampleStr = "abcabcabcbbccccc";
+const result2 = findMaxCharAndCount(exampleStr);
+console.log(`字符最多的是${result2.maxChar}，出现了${result2.maxCount}次`);
