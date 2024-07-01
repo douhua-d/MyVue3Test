@@ -102,3 +102,50 @@ function isEqual(obj1, obj2) {
 
   return true;
 }
+
+// 对象扁平化
+function objectFlat(obj) {
+  let res = {};
+
+  function flat(obj, preKey = "") {
+    Object.entries(obj).forEach(([key, val]) => {
+      let newKey = preKey ? `${preKey}.${key}` : key;
+      if (val && typeof val === "object") {
+        flat(val, newKey);
+      } else {
+        res[newKey] = val;
+      }
+    });
+  }
+
+  flat(obj);
+  return res;
+}
+
+// 反转链表
+function reverseLinkedList(head) {
+  let prev = null;
+  let curr = head;
+  while (curr !== null) {
+    let next = curr.next;
+    curr.next = prev;
+    prev = curr;
+    curr = next;
+  }
+  return prev;
+}
+
+// 判断是否是环形链表
+function hasCycle(head) {
+  let slow = head;
+  let fast = head;
+  while (fast !== null && fast.next !== null) {
+    slow = slow.next;
+    fast = fast.next.next;
+
+    if (fast === slow) {
+      return true;
+    }
+  }
+  return false;
+}
