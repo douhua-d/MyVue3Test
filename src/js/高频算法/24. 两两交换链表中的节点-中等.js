@@ -4,7 +4,7 @@ function ListNode(val, next = null) {
   this.next = next;
 }
 
-// 主函数
+// 主函数  // 两两交换链表节点
 function swapPairs(head) {
   // 创建一个虚拟头节点
   const dummy = new ListNode(0);

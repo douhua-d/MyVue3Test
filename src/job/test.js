@@ -114,3 +114,21 @@ function rotateArr(nums, k) {
   }
   return nums;
 }
+
+// 实现基础版深拷贝 
+
+function deepClone(data) {
+  if (data === null || typeof data !== "object") return data;
+  let res = {};
+  if (Array.isArray(data)) {
+    res = [];
+  }
+
+  for (let key in data) {
+    if (data.hasOwnProperty(key)) {
+      res[key] = deepClone(data[key]);
+    }
+  }
+
+  return res;
+}

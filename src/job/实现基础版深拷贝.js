@@ -31,6 +31,7 @@ function deepClone1(obj) {
 }
 
 console.log(deepClone1({ a: "WET", v: { c: 100 } }));
+console.log(deepClone1(null));
 
 
 // 实现基础版深拷贝

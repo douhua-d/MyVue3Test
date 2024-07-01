@@ -33,5 +33,72 @@ function insertSort(arr) {
     }
     arr[j + 1] = curr;
   }
-  return arr
+  return arr;
+}
+
+//  跳跃游戏
+function jumps(nums) {
+  let jumps = 0;
+  let maxReach = 0;
+  let end = 0;
+
+  for (let i = 0; i < nums.length - 1; i++) {
+    maxReach = Math.max(maxReach, i + nums[i]);
+    if (i === end) {
+      jumps++;
+      end = maxReach;
+    }
+  }
+
+  return jumps;
+}
+
+// 两两交换链表节点
+function swapParis(head) {
+  let dummy = new ListNode();
+  dummy.next = head;
+
+  let prev = dummy;
+  let first = head;
+
+  while (first && first.next) {
+    let second = first.next;
+    let nextPair = second.next;
+
+    second.next = first;
+    first.next = nextPair;
+    prev.next = second;
+
+    prev = first;
+    first = nextPair;
+  }
+
+  return dummy.next;
+
+}
+
+// 手写深度比较isEqual
+function isEqual(obj1, obj2) {
+  const isObject = (data) => data !== null && typeof data === "object";
+
+  if (!isObject(obj1) || !isObject(obj2)) {
+    return obj1 === obj2;
+  }
+
+  if (obj1 === obj2) return true;
+
+  const obj1Keys = Object.keys(obj1);
+  const obj2Keys = Object.keys(obj2);
+
+  if (obj1Keys.length !== obj2Keys.length) {
+    return false;
+  }
+
+  for (let key in obj1) {
+    if (!isEqual(obj1[key], obj2[key])) {
+      return false;
+    }
+  }
+
+  return true;
 }
