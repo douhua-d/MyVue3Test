@@ -24,6 +24,8 @@ class EventEmit {
   }
 
   once(type, fn) {
+    
+    //  todo  这样的实现有问题，只有触发了才行，不能随时解绑
     function func() {
       fn();
       this.off(type, fn);

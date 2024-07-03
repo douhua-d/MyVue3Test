@@ -1,3 +1,8 @@
+//  script start    async1 start    async2  script end  promise1  async1 end  promise2 setTimeout
+
+// setTimeout
+// promise1 (promise2)  async1 end  promise2
+
 console.log("script start");
 
 setTimeout(() => {

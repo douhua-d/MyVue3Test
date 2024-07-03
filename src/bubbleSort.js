@@ -30,4 +30,4 @@ function bubbleSort2(arr) {
   return arr;
 }
 
-console.log("bubbleSor2t------", bubbleSort([1, 8, 6, 4, 70, 60]));
+console.log("bubbleSor2t------", bubbleSort2([1, 8, 6, 4, 70, 60]));

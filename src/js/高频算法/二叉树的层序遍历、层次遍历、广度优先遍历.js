@@ -25,7 +25,7 @@ root.right.right = new TreeNode(7);
 
 // 层序遍历函数
 function levelOrderTraversal(root) {
-  if (!root) return []; // 如果根节点为空，返回空数组
+  if (!root) return []; // 如果根节点为空，返回空数组  todo 一定要记得判断临界值
 
   const result = []; // 用于存储结果的数组
   const queue = [root]; // 初始化队列，起始节点是根节点

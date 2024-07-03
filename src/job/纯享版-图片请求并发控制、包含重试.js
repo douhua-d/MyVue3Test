@@ -18,6 +18,16 @@ class ImageLoader {
     });
   }
 
+  fetData(url) {
+    return new Promise((resolve, reject) => {
+      axios.get(url).then(data => {
+        resolve(data);
+      }).catch(err => {
+        reject(err);
+      });
+    });
+  }
+
   load() {
     return new Promise((resolve, reject) => {
       this.resolve = resolve;

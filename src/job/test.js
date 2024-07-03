@@ -117,5 +117,113 @@ function rotateArr(nums, k) {
 
 // 实现基础版深拷贝 
 
+function emit(type, ...args) {
+  if (!this.events[type]) return;
+  this.events[type] = this.events[type].filter(item => {
+    const { fn, isOnce } = item;
+    fn(...args);
+    if (isOnce) return false;
+    return true;
+  });
+}
 
+// 手写一个防抖
+function debounce(fn, delay, flag) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    if (flag && !timer) {
+      fn.apply(this.args);
+    }
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, delay);
+  };
+}
+
+// 手写一个节流
+function throttle(fn, delay) {
+  let previous = 0;
+  return function(...args) {
+    if (Date.now() - previous > delay) {
+      previous = Date.now();
+      fn.apply(this, args);
+    }
+  };
+}
+
+function throttle(fn, time) {
+  let timer;
+  return function(...args) {
+    if (!timer) {
+      timer = setTimeout(() => {
+        clearTimeout(timer);
+        timer = null;
+        fn.apply(this, args);
+      }, time);
+    }
+  };
+}
+
+let timeoutId = setTimeout(() => {
+  console.log("This is a delayed message.");
+}, 3000);
+
+// 取消定时器
+clearTimeout(timeoutId);
+
+// timeoutId 仍然是一个数字，但不再关联任何活动的定时器
+console.log(1111, timeoutId); // 输出的是数字，比如 1
+
+
+// 手写一个快速排序
+function quickSort(arr) {
+  let len = arr.length;
+  if (len < 2) {
+    return arr;
+  }
+
+  let flag = arr[0];
+  let left = [];
+  let right = [];
+  for (let i = 0; i < len; i++) {
+    let val = len[i];
+    if (val < flag) {
+      left.push(val);
+    } else {
+      right.push(val);
+    }
+  }
+  return quickSort(left).concat(flag, quickSort(right));
+}
+
+
+// 实现一个 选择排序
+
+function selectSort(arr) {
+  let len = arr.length;
+  if (len < 2) {
+    return len;
+  }
+  for (let i = 0; i < len; i++) {
+    let minIndex = i;
+    for (let j = i + 1; j < len; j++) {
+      if (arr[j] < arr[minIndex]) {
+        minIndex = j;
+      }
+    }
+
+    if (minIndex !== i) {
+      [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
+    }
+  }
+  return arr;
+}
+
+// 数组扁平化
+function flatten(arr) {
+  return arr.reduce((prev, curr) => {
+    return prev.concat(Array.isArray(curr) ? flatten(curr) : curr);
+  }, []);
+}
 
