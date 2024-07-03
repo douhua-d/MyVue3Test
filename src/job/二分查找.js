@@ -44,8 +44,6 @@ const result = binarySearch(sortedArray, targetValue);
 console.log(result); // 输出: 6 (目标值 7 在数组中的索引)
 
 
-
-
 function search(arr, target, left, right) {
   let targetIndex = -1;
   let mid = Math.floor((left + right) / 2);
@@ -63,4 +61,23 @@ function search(arr, target, left, right) {
   } else {
     return search(arr, target, left, mid - 1);
   }
+}
+
+
+function search(arr, target) {
+  let left = 0;
+  let right = arr.length - 1;
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+    if (arr[mid] === target) {
+      return mid;
+    }
+    if (arr[mid] < target) {
+      left = mid + 1;
+    }
+    if (arr[mid] > target) {
+      right = mid - 1;
+    }
+  }
+  return targetIndex;
 }

@@ -31,3 +31,21 @@ function flatten(arr) {
 
 console.log("用 reduce 实现数组的 flat 方法", flatten(arr));
 
+function myFlatArr(arr) {
+  let res = [];
+
+  function flat(arr) {
+    for (let val of arr) {
+      if (Array.isArray(val)) {
+        flat(val);  // todo 注意 这里不能  res.push ，只有是简单数据类型的时候才push 
+      } else {
+        res.push(val);
+      }
+    }
+  }
+
+  flat(arr);
+  return res;
+}
+
+console.log(myFlatArr(arr));

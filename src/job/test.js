@@ -227,3 +227,43 @@ function flatten(arr) {
   }, []);
 }
 
+// 实现基本的对象的深拷贝
+function deepClone(data) {
+  if (data === null || typeof data !== "object") return data;
+  let copy = {};
+  if (Array.isArray(data)) {
+    copy = [];
+  }
+
+  for (let key in data) {
+    if (data.hasOwnProperty(key)) {
+      copy[key] = deepClone(data[key]);
+    }
+  }
+
+  return copy;
+}
+
+// 实现一个bind
+function myBind(context = window, ...args) {
+  if (typeof this !== "function") {
+    throw new Error("type err");
+  }
+  let fn = this;
+  let bound = function(...args2) {
+    return fn.apply(this instanceof bound ? this : context, args.concat(args2));
+  };
+  bound.prototype = Object.create(fn.prototype);
+  return bound;
+}
+
+// 实现一个  instanceOf
+function myInstanceOf(left, right) {
+  if (left === null || typeof left !== "object") return false;
+  let proto = Object.getPrototypeOf(left);
+  while (true) {
+    if (!proto) return false;
+    if (proto === right.prototype) return true;
+    proto = Object.getPrototypeOf(proto);
+  }
+}

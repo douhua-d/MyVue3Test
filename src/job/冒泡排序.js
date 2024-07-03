@@ -16,7 +16,7 @@
 function bubbleSort(arr) {
   const len = arr.length;
   for (let i = 0; i < len - 1; i++) {
-    // 注意差别在这行，我们对内层循环的范围作了限制
+    // 注意差别在这行，我们对内层循环的范围作了限制  每次都是从 0 开始的，冒泡到最后
     for (let j = 0; j < len - 1 - i; j++) {
       if (arr[j] > arr[j + 1]) {
         [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];

@@ -4,6 +4,7 @@
 // todo 说我实现的不对，这是个选择排序 ??？ 这就是冒泡排序啊 ，面试官记错了吧
 function sort(arr) {
   for (let i = 0; i < arr.length; i++) {
+    // todo 选择排序 是从 i+1  ， 冒泡排序是每次从第0个开始，往后冒泡
     for (let j = i + 1; j < arr.lengh - 1; j++) {
       if (arr[i] < arr[j]) {
         let temp = arr[j];

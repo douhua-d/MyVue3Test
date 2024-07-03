@@ -149,3 +149,71 @@ function hasCycle(head) {
   }
   return false;
 }
+
+// 插入排序  
+function insertSort(arr) {
+  let len = arr.length;
+  for (let i = 1; i < len; i++) {
+    let j = i - 1;
+    let curr = arr[i];
+    while (j >= 0 && arr[j] > curr) {
+      arr[j + 1] = arr[j];
+      j--;
+    }
+    arr[j + 1] = curr;
+  }
+  return arr;
+}
+
+// 缺失的第一个正数
+function firstMissingPositive(arr) {
+  let nums = arr.filter(num => num > 0);
+  if (!nums.length) return 1;
+  nums.sort((a, b) => a - b);
+  if (nums[0] !== 1) {
+    return 1;
+  }
+  for (let i = 0; i < nums.length; i++) {
+    if (nums[i + 1] - nums[i] > 1) {
+      return nums[i] + 1;
+    }
+  }
+  return nums[nums.length - 1] + 1;
+}
+
+// console.log(firstMissingPositive([1, 2, 3]));
+
+// 手写一个二分查找
+function search(arr, target) {
+  let left = 0;
+  let right = arr.length - 1;
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+    if (arr[mid] === target) {
+      return mid;
+    }
+    if (arr[mid] < target) {
+      left = mid + 1;
+    }
+    if (arr[mid] > target) {
+      right = mid - 1;
+    }
+  }
+  return targetIndex;
+}
+
+console.log(search([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 7));
+
+// 实现两数之和
+function twoSum(arr, target) {
+  let map = new Map();
+  for (let i = 0; i < arr.length; i++) {
+    let complete = target - arr[i];
+    if (map.has(complete)) {
+      return [i, map.get(complete)];
+    } else {
+      map.set(arr[i], i);
+    }
+  }
+  return [];
+}
