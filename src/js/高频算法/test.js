@@ -217,3 +217,105 @@ function twoSum(arr, target) {
   }
   return [];
 }
+
+// 实现三数之和 
+function threeSum(arr) {
+  let res = [];
+  let len = arr.length;
+  arr.sort((a, b) => a - b);  // todo 别忘了  先排序
+  for (let i = 0; i < len - 2; i++) {
+    let j = i + 1;
+    let k = len - 1;
+
+    while (i > 0 && arr[i] === arr[i - 1]) {
+      continue;
+    }
+
+    while (j <= k) {
+      let total = arr[i] + arr[j] + arr[k];
+      if (total < 0) {
+        j++;
+        while (j < k && arr[j] === arr[j - 1]) {
+          j++;
+        }
+      } else if (total > 0) {
+        k--;
+        while (j < k && arr[k] === arr[k + 1]) {
+          k--;
+        }
+      } else {
+        res.push(arr[i], arr[j], arr[k]);
+
+        // todo 别忘了后边还有逻辑呢  移动指针 和 判断重复
+        j++;
+        k--;
+        while (j < k && arr[j] === arr[j - 1]) {
+          j++;
+        }
+        while (j < k && nums[k] === nums[k + 1]) {
+          k--;
+        }
+      }
+    }
+  }
+  return res;
+}
+
+// 最长回文子串
+function longestStr(str) {
+  if (str.length < 2) {
+    return str;
+  }
+
+  let start = 0;
+  let maxLength = 1;
+
+  function expandAroundCenter(left, right) {
+    while (left >= 0 && right <= str.length - 1 && str[left] === str[right]) {
+
+      // todo 注意点 需要判断之后才更新赋值啊！！
+      if (right - left + 1 > maxLength) {
+        maxLength = right - left + 1;
+        start = left;
+      }
+
+      // todo  别总忘修改迭代条件值啊！！
+      left--;
+      right++;
+    }
+  }
+
+  for (let i = 0; i < str.length - 1; i++) {
+    expandAroundCenter(i - 1, i + 1);
+    expandAroundCenter(i, i + 1);
+  }
+
+  // todo 注意-结束的索引是加上 长度 + start ！！
+
+  return str.substring(start, start + maxLength);
+}
+
+
+// 无重复字符的最长子串  返回的是长度
+function longestStr(s) {
+  let len = s.length;
+  if (len < 2) {
+    return len;
+  }
+  let left = 0, right = 0;
+  let set = new Set();
+  let maxLen = 0;
+  while (right < len) {
+    if (!set.has(s[right])) {
+      set.add(s[right]);
+      right++;
+      maxLen = Math.max(maxLen, set.size);
+    } else {
+      while (set.has(s[right])) {
+        set.delete(s[left]);
+        left++;
+      }
+    }
+  }
+  return maxLen;
+}

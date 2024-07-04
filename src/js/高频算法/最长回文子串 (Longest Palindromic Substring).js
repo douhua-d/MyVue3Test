@@ -38,6 +38,42 @@ var longestPalindrome = function(s) {
 console.log(longestPalindrome("babad"));
 
 
+// 手写了一遍中的 细节错误问题标注
+function longestStr(str) {
+  // todo  注意- 首先判断临界值
+  if (str.length < 2) {
+    return str;
+  }
+
+  let start = 0;
+  let maxLength = 1;
+
+  function expandAroundCenter(left, right) {
+    while (left >= 0 && right <= str.length - 1 && str[left] === str[right]) {
+
+      // todo 注意点 需要判断之后才更新赋值啊！！
+      if (right - left + 1 > maxLength) {
+        maxLength = right - left + 1;
+        start = left;
+      }
+
+      // todo  别总忘修改迭代条件值啊！！
+      left--;
+      right++;
+    }
+  }
+
+  for (let i = 0; i < str.length - 1; i++) {
+    expandAroundCenter(i - 1, i + 1);
+    expandAroundCenter(i, i + 1);
+  }
+
+  // todo 注意-结束的索引是加上 长度 + start ！！
+
+  return str.substring(start, start + maxLength);
+}
+
+
 // 如下是 chatGPT 给的
 function longestPalindrome(s) {
   if (s.length < 2) return s;

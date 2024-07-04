@@ -20,6 +20,31 @@ function lengthLongestStr(s) {
   return maxLength;
 }
 
+// 力扣运行是 对的 记忆使用这版吧
+function longestStr(s) {
+  let len = s.length;
+  if (len < 2) {
+    return len;
+  }
+  let maxLen = 0;
+  let left = 0, right = 0;
+  let set = new Set();
+  while (right < len) {
+    if (!set.has(s[right])) {
+      set.add(s[right]);
+      right++;
+      maxLen = Math.max(maxLen, set.size);
+    } else {
+      while (set.has(s[right])) {
+        set.delete(s[left]);
+        left++;
+      }
+    }
+  }
+  return maxLen;
+}
+
+// 力扣运行是对的
 let lengthOfLongestSubstring = (s) => {
   let len = s.length;
   if (len <= 1) {
