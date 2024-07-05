@@ -10,24 +10,24 @@
  * @param {ListNode} head
  * @return {boolean}
  */
-var hasCycle = function(head) {
-  if (head == null || head.next == null) {
-    return false;
-  }
-  let slow = head;
-  let fast = head;
-  while (fast !== null) {
-    if (!fast.next?.next) return false;
-    slow = slow.next;
-    fast = fast.next.next;
-    if (fast === slow) {
-      return true;
-    }
-  }
-  return false;
-};
+// var hasCycle = function(head) {
+//   if (head == null || head.next == null) {
+//     return false;
+//   }
+//   let slow = head;
+//   let fast = head;
+//   while (fast !== null) {
+//     if (!fast.next?.next) return false;
+//     slow = slow.next;
+//     fast = fast.next.next;
+//     if (fast === slow) {
+//       return true;
+//     }
+//   }
+//   return false;
+// };
 
-// 判断是否是环形链表
+// 判断是否是环形链表   记忆和使用这个
 function hasCycle(head) {
   // 初始化快慢指针
   let slow = head;

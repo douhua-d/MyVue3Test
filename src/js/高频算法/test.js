@@ -319,3 +319,87 @@ function longestStr(s) {
   }
   return maxLen;
 }
+
+// 实现一个单例模式
+
+
+function fn() {
+  this.type = "lazy";
+  this.obj = {};
+}
+
+// 懒汉式
+const lazySingleTon = (function() {
+  let _instance = null;
+  return function() {
+    return _instance || (_instance = new fn());
+  };
+})();
+
+// 饿汉式
+const hungrySingleTon = (function() {
+  let _instance = new fn();
+  return function() {
+    return _instance;
+  };
+})();
+
+
+// 找到与目标整数最接近的整数  字节二面
+function findCloset(arr, target) {
+  let len = arr.length;
+  if (!len) {
+    throw new Error("数组不能为空");
+  }
+  let closet = arr[0];
+  let minDiff = Math.abs(target - closet);
+  for (let i = 1; i < len; i++) {
+    let diff = Math.abs(target - arr[i]);
+    if (diff < minDiff) {
+      minDiff = diff;
+      closet = arr[i];
+    } else if (diff === minDiff) {
+      continue;
+    }
+  }
+  return closet;
+}
+
+// 实现最近最少使用算法  LRU  实现LRU淘汰算法
+class LRUCache {
+  constructor(length) {
+    this.length = length;
+    this.data = new Map();
+  }
+
+  set(key, value) {
+    if (this.data.has(key)) {
+      this.data.delete(key);
+    }
+
+    this.data.set(key, value);
+    if (this.data.size > this.length) {
+      let oldKey = this.data.keys().next().value;
+      this.data.delete(oldKey);
+    }
+  }
+
+  get(key) {
+    if (!this.data.has(key)) {
+      return null;
+    }
+
+    let val = this.data.get(key);
+    this.data.delete(key);
+    this.data.set(key, val);
+    // todo  记得返回 val啊！！
+    return val;
+  }
+}
+
+// 数组去重
+let arr = [1, 4, 6, 7, 6];
+let res = arr.filter((item, index) => arr.indexOf(item) === index);
+console.log({ res });
+
+console.log([...new Set(arr)]);

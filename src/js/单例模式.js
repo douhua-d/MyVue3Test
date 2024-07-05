@@ -37,6 +37,8 @@ const visitor2 = new HungrySingleton();
 const visitor3 = new LazySingleton();
 const visitor4 = new LazySingleton();
 
+console.log({visitor1});
+
 console.log(visitor1 === visitor2);	// true
 console.log(visitor3 === visitor4);	// true
 

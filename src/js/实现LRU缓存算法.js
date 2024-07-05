@@ -1,5 +1,5 @@
 
-//缓存 最近最少使用算法
+//缓存 最近最少使用算法  实现LRU淘汰算法
 class LRUCache {
   constructor(length) {
     this.length = length; // 存储长度
