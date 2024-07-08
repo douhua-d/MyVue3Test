@@ -19,6 +19,8 @@
  * 输出: 4
  */
 
+
+// todo 好好看题， 这时间复杂度不是O(log n) 的算法。 应该用二分查找
 function findTarget(arr, target) {
   let closetIndex = 0;
   let minDiff = Math.abs(arr[closetIndex] - target);
@@ -36,4 +38,22 @@ function findTarget(arr, target) {
 
   return closetIndex + 1;
 
+}
+
+console.log(findTarget([1, 3, 5, 6], 2)); // 输出: 1
+
+function searchTarget(arr, target) {
+  let left = 0;
+  let right = target.length - 1;
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+    if (arr[mid] === target) {
+      return mid;
+    } else if (arr[mid] < target) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+  return left;
 }

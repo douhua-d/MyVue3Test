@@ -27,7 +27,7 @@
 //   return false;
 // };
 
-// 判断是否是环形链表   记忆和使用这个
+// 判断是否是环形链表  todo 记忆和使用这个
 function hasCycle(head) {
   // 初始化快慢指针
   let slow = head;
