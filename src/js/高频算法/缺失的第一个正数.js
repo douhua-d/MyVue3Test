@@ -63,7 +63,7 @@ console.log(firstMissingPositive([3, 4, -1, 1])); // 输出: 2
 console.log(firstMissingPositive([7, 8, 9, 11, 12])); // 输出: 1
 
 
-//第一版  OK的  力扣中运行也是没问题的
+//第一版  OK的  力扣中运行也是没问题的   todo 用这版吧
 function firstMissingPositive(nums) {
   nums = nums.filter(item => item > 0);
   if (nums.length) {

@@ -1,39 +1,39 @@
 /**
- * 给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。
  *
- * 请必须使用时间复杂度为 O(log n) 的算法。
- *
- *
- *
- * 示例 1:
- *
- * 输入: nums = [1,3,5,6], target = 5
- * 输出: 2
- * 示例 2:
- *
- * 输入: nums = [1,3,5,6], target = 2
- * 输出: 1
- * 示例 3:
- *
- * 输入: nums = [1,3,5,6], target = 7
- * 输出: 4
  */
 
-function findTarget(arr, target) {
-  let closetIndex = 0;
-  let minDiff = Math.abs(arr[closetIndex] - target);
-  if (arr[closetIndex] === target) {
-    return closetIndex;
-  }
-  for (let i = 1; i < arr.length; i++) {
-    let diff = Math.abs(arr[i] - target);
-    if (diff < minDiff) {
-      closetIndex = i;
-    } else if (diff === 0) {
-      return i;
+function versionSort(arr) {
+  arr.sort((a, b) => {
+    let arr1 = a.split("."); // [2,1,0,1]
+    let arr2 = b.split("."); // [0,402,1]
+
+    for (let i = 0; i < arr1.length; i++) {
+      if (arr2[i]) {
+        return arr2[i] - arr1[i];
+      } else {
+        return arr1 - arr2;
+      }
     }
-  }
 
-  return closetIndex + 1;
-
+  });
 }
+
+function searchNum(arr, k = 3) {
+  if (!arr.length) return [];
+  let res = [];
+  for (let i = 0; i < arr.length - k + 1; i++) {
+    let curArr = arr.slice(i, k + i);
+    console.log("arr[i]===", curArr, arr[i]);
+    let curMax = curArr[0];
+    for (let val of curArr) {
+      if (val > curMax) {
+        curMax = val;
+      }
+    }
+    res.push(curMax);
+  }
+  return res;
+}
+
+console.log(searchNum([1, 3, -1, -3, 5, 3, 6, 7], 3));
+
