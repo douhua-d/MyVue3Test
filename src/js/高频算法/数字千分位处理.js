@@ -10,7 +10,7 @@ function formatNumber(number) {
   number += "";
   let [interger, decimal] = number.split(".");
 
-  console.log("333",interger,decimal);
+  console.log("333", interger, decimal);
 
   // console.log(interger.split(""), decimal);
 
@@ -51,6 +51,32 @@ console.log("123456".split(), "123456".split(""));
 
 // console.log(1111111111,"123456".replace(reg, ','));
 
-let reg = /(?!^)(?=(\d{3})+$)/g
+let reg = /(?!^)(?=(\d{3})+$)/g;
 
-console.log(1111111111,"123456".replace(reg, ','));
+console.log(1111111111, "123456".replace(reg, ","));
+
+// 数字千分位处理  比如 1236789  =>  1,236,789
+function dealNumber(num) {
+  let arr = num.toString().split("").map(Number).reverse();
+  let strArr = [];
+
+  for (let i = 0; i < arr.length; i++) {
+    if (i !== 0 && i % 3 === 0) {
+      strArr.push(",");
+    }
+    strArr.push(arr[i]);
+  }
+  
+  return strArr.reverse().join('');
+}
+
+console.log('dealNumber==',dealNumber(12345678));
+
+
+let number = 123456;
+
+console.log(number.toString().split("")); // todo 拿到的还是字符串
+
+console.log(number.toString().split("").map(Number));  // 好了数字了
+
+

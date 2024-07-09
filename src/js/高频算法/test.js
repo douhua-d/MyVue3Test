@@ -403,3 +403,21 @@ let res = arr.filter((item, index) => arr.indexOf(item) === index);
 console.log({ res });
 
 console.log([...new Set(arr)]);
+
+// 反转字符串
+/**
+ * 输入：["h","e","l","l","o"]
+ * 输出：["o","l","l","e","h"]
+ */
+function reverseStr(s) {
+  let left = 0;
+  let right = s.length - 1;
+  while (left < right) {
+    [s[left], s[right]] = [s[right], s[left]];
+    left++;
+    right--;
+  }
+  return s;
+}
+
+console.log("reverseStr===", reverseStr(["h", "e", "l", "l", "o"]));
