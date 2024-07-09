@@ -1,39 +1,31 @@
+const flatArr = (arr) => {
+  return arr.reduce((pre, item) => {
+    return pre.concat(Array.isArray(item) ? flatArr(item) : item);
+  }, []);
+};
+
 /**
- *
+ * [{
+ * userId:12,
+ * timeStanp:124234,
+ * action:1/-1
+ * }]
  */
 
-function versionSort(arr) {
-  arr.sort((a, b) => {
-    let arr1 = a.split("."); // [2,1,0,1]
-    let arr2 = b.split("."); // [0,402,1]
-
-    for (let i = 0; i < arr1.length; i++) {
-      if (arr2[i]) {
-        return arr2[i] - arr1[i];
-      } else {
-        return arr1 - arr2;
+// 输入：strs = ["flower","flow","flight"]
+// 输出："fl"
+const findCommon = (arr) => {
+  let res = "";
+  let firstStr = arr[0];
+  for (let i = 0; i < firstStr.length; i++) {
+    for (let j = 1; j < arr.length; j++) {
+      if (arr[j][i] !== firstStr[i]) {
+        return res;
       }
     }
-
-  });
-}
-
-function searchNum(arr, k = 3) {
-  if (!arr.length) return [];
-  let res = [];
-  for (let i = 0; i < arr.length - k + 1; i++) {
-    let curArr = arr.slice(i, k + i);
-    console.log("arr[i]===", curArr, arr[i]);
-    let curMax = curArr[0];
-    for (let val of curArr) {
-      if (val > curMax) {
-        curMax = val;
-      }
-    }
-    res.push(curMax);
+    res += firstStr[i];
   }
   return res;
-}
+};
 
-console.log(searchNum([1, 3, -1, -3, 5, 3, 6, 7], 3));
-
+console.log(findCommon(["flower", "flow", "flight"]));
