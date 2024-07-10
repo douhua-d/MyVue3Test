@@ -72,3 +72,11 @@ function isEqual(obj1, obj2) {
 }
 
 console.log(111, { q: 1 } === 100);  // false
+
+console.log({ name: 1 } === { name: 1 });
+
+console.log(Object.is({ name: 1 }, { name: 1 }));  // false
+
+console.log([1, 2, 3] === 3);
+
+console.log(isEqual({ name: 1 }, { name: 1 }));
