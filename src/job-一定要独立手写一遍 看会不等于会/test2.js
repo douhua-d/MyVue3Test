@@ -54,3 +54,54 @@ function isEqual(data1, data2) {
 
 // 实现一个基础版的对象深拷贝
 
+// 搜索插入位置
+let searchInsert = (nums, target) => {
+  let left = 0;
+  let right = nums.length - 1;
+
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+    if (nums[mid] === target) {
+      return mid;
+    } else if (nums[mid] < target) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+  return left;
+};
+
+// 链表两两交换
+
+let swapPairs = (head) => {
+  let dummy = new ListNode();
+  dummy.next = head;
+
+  let prev = dummy;
+  let first = head;
+  while (first && first.next) {
+    let second = first.next;
+    let nextPair = second.next;
+
+    second.next = first;
+    first.next = nextPair;
+    prev.next = second;
+
+    prev = first;
+    first = nextPair;
+  }
+  return dummy.next;
+};
+
+// 求二叉树的最大深度
+
+let maxDepth = (root) => {
+  if (!root) {
+    return 0;
+  } else {
+    let leftDepth = maxDepth(root.left);
+    let rightDepth = maxDepth(root.right);
+    return Math.max(leftDepth, rightDepth) + 1;
+  }
+};
