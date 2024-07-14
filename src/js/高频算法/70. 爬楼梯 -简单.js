@@ -33,3 +33,7 @@ function climbStairs(n) {
 // 示例使用
 const n = 5;
 console.log(climbStairs(n)); // 输出 8
+
+
+console.log(Array(3)) // [empty x 3]
+console.log(Array(3, 4,1)) // [3, 4]
