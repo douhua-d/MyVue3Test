@@ -82,3 +82,24 @@ const sortVersion = (arr) => {
   });
   return arr;
 };
+
+// 二叉树的层序遍历
+
+let levelTraversal = (root) => {
+  // todo 注意判断临界为空的情况
+  if (!root) return []; // 如果根节点为空，返回空数组  todo 一定要记得判断临界值
+  let res = [];
+  let queue = [root];
+  while (queue.length) {
+    let currLevelLength = queue.length;
+    let curArr = [];
+    for (let i = 0; i < currLevelLength; i++) {
+      let node = queue.shift();
+      curArr.push(node.val);
+      if (node.left) queue.push(node.left);
+      if (node.right) queue.push(node.right);
+    }
+    res.push(curArr);
+  }
+  return res;
+};
