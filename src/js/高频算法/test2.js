@@ -103,3 +103,20 @@ let levelTraversal = (root) => {
   }
   return res;
 };
+
+// 125  验证回文串
+let isPalindrome = (s) => {
+  let str = s.toLowerCase();
+  str = str.replace(/[^0-9a-z]/g, "");
+  let left = 0;
+  let right = str.length - 1;
+  while (left <= right) {
+    if (str[left] !== str[right]) {
+      return false;
+    }
+    // todo  注意 别忘了条件值的变化啊！！！！！
+    left++;
+    right--;
+  }
+  return true;
+};
