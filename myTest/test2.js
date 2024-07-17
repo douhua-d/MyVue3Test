@@ -76,3 +76,29 @@ function myInterval(fn, time) {
   };
 
 }
+
+// 无重复字符的最长子串  
+let longestStr = (s) => {
+  let len = s.length;
+  if (len < 2) {
+    return len;
+  }
+
+  let set = new Set();
+  let left = 0;
+  let right = 0;
+  let maxLen = 0;
+  while (right < len) {
+    if (!set.has(s[right])) {
+      set.add(s[right]);
+      maxLen = Math.max(maxLen, set.size);
+      right++;
+    } else {
+      while (set.has(s[right])) {
+        set.delete(s[left]);
+        left++;
+      }
+    }
+  }
+  return maxLen;
+};
