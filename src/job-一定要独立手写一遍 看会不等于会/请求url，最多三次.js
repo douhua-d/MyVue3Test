@@ -7,6 +7,14 @@ class MaxRetriesExceeded extends Error {
   }
 }
 
+
+fetch(url).then(response => {
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  return response.json(); // Assuming the response is JSON
+});
+
 function fetchWithRetries(url, retries = 3) {
   return new Promise((resolve, reject) => {
     function attemptFetch(remainingRetries) {

@@ -3,6 +3,7 @@
 class ImageLoader {
   constructor(urls, limit = 3, maxRetries = 3) {
     this.urls = urls.map(url => ({ url, retries: 0 }));
+    // this.urls = urls.map((url, index) => ({ url, retries: 0, index }));
     this.limit = limit;
     this.maxRetries = maxRetries;
     this.currentCount = 0;
@@ -47,14 +48,17 @@ class ImageLoader {
     if (this.urls.length && this.currentCount < this.limit) {
       this.currentCount++;
       const { url, retries } = this.urls.shift();
+      // const { url, retries, index } = this.urls.shift();
       this.loadImage(url).then((res) => {
         this.currentCount--;
         this.results.push(res);
+        // this.results[index] = res;
         this.next();
       }).catch((error) => {
         console.error(`Error loading image: ${error}, retries: ${retries}`); // 处理加载失败的情况
         if (retries < this.maxRetries) {
-          this.urls.push({ url, retries: retries + 1 });
+          // this.urls.push({ url, retries: retries + 1 });
+          this.urls.push({ url, retries: retries + 1, index });
         }
         this.currentCount--;
         this.next();

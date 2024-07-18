@@ -102,3 +102,25 @@ let longestStr = (s) => {
   }
   return maxLen;
 };
+
+// 请求url  最多重试3次
+function fetchWithRetries(url, retries = 3) {
+  return new Promise((resolve, reject) => {
+    function attemptFetch(remainingRetries) {
+      axios.get(url)
+        .then(response => {
+          resolve(response.data);
+        })
+        .catch(error => {
+          if (remainingRetries > 0) {
+            console.log(`Retrying... Attempts remaining: ${remainingRetries}`);
+            attemptFetch(remainingRetries - 1);
+          } else {
+            reject(new MaxRetriesExceeded(`Failed to fetch from ${url} after ${retries} attempts`));
+          }
+        });
+    }
+
+    attemptFetch(retries);
+  });
+}
