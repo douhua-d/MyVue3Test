@@ -124,3 +124,16 @@ function fetchWithRetries(url, retries = 3) {
     attemptFetch(retries);
   });
 }
+
+// 冒泡排序 从大到小
+let bubbleSort = (arr) => {
+  for (let i = 0; i < arr.length - 1; i++) {
+    // todo 注意是从0开始的
+    for (let j = 0; j < arr.length - 1 - i; j++) {
+      // todo 注意是比较的  j 和 j+1 ， 不是  i和j, 外层的i就是来控制比较的趟数的，每次都是从索引0开始比较
+      if (arr[j + 1] > arr[j]) {
+        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+      }
+    }
+  }
+};

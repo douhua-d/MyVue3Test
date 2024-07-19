@@ -61,6 +61,9 @@ console.log("selectionSort--", selectionSort(arr));
  * @param {number[]} arr - 需要排序的数组
  * @returns {number[]} - 排序后的数组
  */
+
+
+// todo  记忆这版吧
 function selectionSort6(arr) {
   const n = arr.length;
 

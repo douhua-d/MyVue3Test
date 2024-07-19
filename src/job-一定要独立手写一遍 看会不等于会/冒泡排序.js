@@ -17,7 +17,9 @@ function bubbleSort(arr) {
   const len = arr.length;
   for (let i = 0; i < len - 1; i++) {
     // 注意差别在这行，我们对内层循环的范围作了限制  每次都是从 0 开始的，冒泡到最后
+    // todo 注意是从0开始的
     for (let j = 0; j < len - 1 - i; j++) {
+      // todo 注意是比较的  j 和 j+1 ， 不是  i和j, 外层的i就是来控制比较的趟数的，每次都是从索引0开始比较
       if (arr[j] > arr[j + 1]) {
         [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
       }
