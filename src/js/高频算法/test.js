@@ -467,3 +467,22 @@ let groupWords = (strs) => {
     }
     return Array.from(map.values());
 };
+
+// 将数组分成和相等的三个部分
+let canThreePartsSum = (arr) => {
+    let total = arr.reduce((a, b) => a + b);
+    if (total % 3 !== 0) return false;
+    let targetSum = total / 3;
+    let count = 0;
+    let currSum = 0;
+    for (let num of arr) {
+        // todo 注意：先会加个和
+        currSum += num;
+        if (currSum === targetSum) {
+            count++;
+            currSum = 0;
+        }
+    }
+    // todo 注意：判断的是大于等于 不是等于
+    return count >= 3;
+};

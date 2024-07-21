@@ -48,6 +48,11 @@ var removeDuplicates = function (nums) {
         }
     }
 
+    console.log(nums);
+
     // 返回新数组的长度
     return i + 1;
 };
+let nums = [1,1,2]
+console.log(removeDuplicates(nums));
+// console.log(nums);

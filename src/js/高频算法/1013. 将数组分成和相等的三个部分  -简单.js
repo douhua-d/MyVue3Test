@@ -39,6 +39,7 @@ function canThreePartsEqualSum (arr) {
     let count = 0;
 
     for (const num of arr) {
+        // todo 注意：先会加个和
         currentSum += num;
         if (currentSum === targetSum) {
             currentSum = 0;
@@ -46,6 +47,7 @@ function canThreePartsEqualSum (arr) {
         }
     }
 
+    // todo 注意：判断的是大于等于 不是等于
     // 要找到恰好三个相等的部分
     return count >= 3;
 }
