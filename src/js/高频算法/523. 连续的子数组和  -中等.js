@@ -63,6 +63,29 @@
 // sum_4 = (23 + 2 + 4 + 6 + 7) % 6 = 0
 // 注意，sum_0、sum_2 和 sum_3 对 6 取模结果都是 5。sum_0 和 sum_2 表示从位置 1 到 2 的子数组 [2, 4] 的和是 6 的倍数。
 
+
+/**
+ * 更详细的解释
+ * 原始结果：-7 % 3 = -1
+ * 加上模数：-1 + 3 = 2
+ * 再次取模：2 % 3 = 2
+ * 这个修正确保了结果 2 是在范围 [0, 3) 内，这是一个非负数。
+ * 
+ * function mod(a, b) {
+ *     return ((a % b) + b) % b;
+ * }
+ *
+ * console.log(mod(-7, 3)); // 输出：2
+ * console.log(mod(7, -3)); // 输出：1
+ * console.log(mod(7, 3)); // 输出：1
+ * console.log(mod(-7, -3)); // 输出：-1
+ * 
+ * 
+ * @param nums
+ * @param k
+ * @returns {boolean}
+ */
+
 function checkSubarraySum(nums, k) {
   const n = nums.length;
   if (n < 2) return false;

@@ -74,5 +74,42 @@ function fn(s) {
   )
     [arr[nums - 1], arr[arr.length - 1]] = [arr[arr.length - 1], arr[nums - 1]];
   return arr.join();
-
 }
+
+
+function rearrangeToMaxOddBinary(s) {
+  // 统计0和1的数量
+  let count0 = 0;
+  let count1 = 0;
+
+  for (let char of s) {
+    if (char === '0') {
+      count0++;
+    } else if (char === '1') {
+      count1++;
+    }
+  }
+
+  // 确保最后一位是'1'，使得它是奇数
+  if (count1 === 0) {
+    return "没有'1'，无法生成奇数";
+  }
+
+  // 构建结果字符串
+  let result = '';
+
+  // 添加所有的'1'，减去1个以确保最后一位是'1'
+  result += '1'.repeat(count1 - 1);
+  // 添加所有的'0'
+  result += '0'.repeat(count0);
+  // 最后添加一个'1'
+  result += '1';
+
+  return result;
+}
+
+// 示例1
+console.log(rearrangeToMaxOddBinary('010')); // 输出：'001'
+
+// 示例2
+console.log(rearrangeToMaxOddBinary('0101')); // 输出：'1101'

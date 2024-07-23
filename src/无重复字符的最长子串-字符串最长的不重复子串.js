@@ -31,8 +31,6 @@ console.log(lengthOfLongestSubstring("pwwkew"));
 console.log(lengthOfLongestSubstring(""));
 
 
-
-
 // 无重复字符的最长子串  -bilibili视频讲解
 function lengthOfLongestStr(s) {
   const len = s.length;
