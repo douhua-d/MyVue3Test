@@ -31,28 +31,50 @@
  * 解释：函数应该返回新的长度 2 ，并且原数组 nums 的前两个元素被修改为 1, 2 。不需要考虑数组中超出新长度后面的元素
  */
 
-var removeDuplicates = function (nums) {
+// var removeDuplicates = function (nums) {
+//     if (nums.length === 0) return 0;
+
+//     // 初始化指针 i
+//     let i = 0;
+
+//     // 遍历数组
+//     for (let j = 1; j < nums.length; j++) {
+//         // 如果当前元素和 i 位置的元素不同
+//         if (nums[j] !== nums[i]) {
+//             // i 指针向前移动一位
+//             i++;
+//             // 将当前元素的值赋给 i 位置
+//             nums[i] = nums[j];
+//         }
+//     }
+
+//     console.log(nums);
+
+//     // 返回新数组的长度
+//     return i + 1;
+// };
+// let nums = [1,1,2]
+// console.log(removeDuplicates(nums));
+// console.log(nums);
+
+
+function removeDuplicates(nums) {
     if (nums.length === 0) return 0;
 
-    // 初始化指针 i
-    let i = 0;
+    let i = 0; // 慢指针，用于跟踪不重复的元素
 
-    // 遍历数组
-    for (let j = 1; j < nums.length; j++) {
-        // 如果当前元素和 i 位置的元素不同
-        if (nums[j] !== nums[i]) {
-            // i 指针向前移动一位
-            i++;
-            // 将当前元素的值赋给 i 位置
-            nums[i] = nums[j];
+    for (let j = 1; j < nums.length; j++) { // 快指针，从第二个元素开始
+        if (nums[j] !== nums[i]) { // 如果发现与上一个不相等的元素
+            i++; // 先移动慢指针
+            nums[i] = nums[j]; // 将当前不重复的元素放到正确位置
         }
     }
 
-    console.log(nums);
+    return i + 1; // 返回数组中不重复元素的长度
+}
 
-    // 返回新数组的长度
-    return i + 1;
-};
-let nums = [1,1,2]
-console.log(removeDuplicates(nums));
-// console.log(nums);
+// 测试
+const nums = [1, 1, 2, 2, 3, 4, 4, 5];
+const length = removeDuplicates(nums);
+console.log('数组中不重复元素的长度:', length);
+console.log('去重后的数组:', nums.slice(0, length));

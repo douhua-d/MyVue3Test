@@ -35,26 +35,26 @@
  */
 
 function reverse(x) {
-  // 定义 32 位有符号整数的范围
-  const MAX_INT = 2 ** 31 - 1; // 2147483647
-  const MIN_INT = -(2 ** 31);  // -2147483648
+    // 定义 32 位有符号整数的范围
+    const MAX_INT = 2 ** 31 - 1; // 2147483647
+    const MIN_INT = -(2 ** 31);  // -2147483648
 
-  let result = 0;
-  let num = Math.abs(x);
+    let result = 0;
+    let num = Math.abs(x);
 
-  while (num !== 0) {
-    let digit = num % 10;
-    num = Math.floor(num / 10);
+    while (num !== 0) {
+        let digit = num % 10;
+        num = Math.floor(num / 10);
 
-    // 检查是否溢出
-    if (result > (MAX_INT - digit) / 10) {
-      return 0;
+        // 检查是否溢出
+        if (result > (MAX_INT - digit) / 10) {
+            return 0;
+        }
+
+        result = result * 10 + digit;
     }
 
-    result = result * 10 + digit;
-  }
-
-  return x < 0 ? -result : result;
+    return x < 0 ? -result : result;
 }
 
 // 示例使用
@@ -63,3 +63,50 @@ console.log(reverse(-123));   // 输出: -321
 console.log(reverse(120));    // 输出: 21
 console.log(reverse(0));      // 输出: 0
 console.log(reverse(1534236469)); // 输出: 0 (反转后溢出)
+
+
+
+
+
+
+/**
+ * @param {number} x - 输入的32位有符号整数
+ * @return {number} - 反转后的整数，如果溢出则返回0
+ */
+function reverse2(x) {
+    // 定义32位有符号整数的范围
+    const INT_MAX = 2 ** 31 - 1; // 2147483647
+    const INT_MIN = -(2 ** 31);  // -2147483648
+
+    // 记录原整数的符号
+    const sign = x < 0 ? -1 : 1;
+
+    // 转换为字符串并去除符号
+    const reversedStr = Math.abs(x).toString().split('').reverse().join('');
+
+    // 转换回整数并恢复符号
+    const reversedNum = sign * parseInt(reversedStr, 10);
+
+    // 检查是否溢出
+    if (reversedNum < INT_MIN || reversedNum > INT_MAX) {
+        return 0;
+    }
+
+    return reversedNum;
+}
+
+// 测试用例
+const testCases = [
+    { input: 123, expected: 321 },
+    { input: -123, expected: -321 },
+    { input: 120, expected: 21 },
+    { input: 0, expected: 0 },
+    { input: 1534236469, expected: 0 }, // 溢出
+    { input: -2147483648, expected: 0 }, // 溢出
+];
+
+testCases.forEach(({ input, expected }, index) => {
+    const result = reverse2(input);
+    console.log(`测试用例 ${index + 1}: 输入 = ${input}, 期望 = ${expected}, 得到 = ${result}`);
+});
+
