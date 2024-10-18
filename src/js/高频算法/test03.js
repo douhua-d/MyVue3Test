@@ -169,3 +169,23 @@ function jump(nums) {
 // // 测试用例
 // console.log(jump([2, 3, 1, 1, 4])); // 输出: 2
 // console.log(jump([2, 3, 0, 1, 4])); // 输出: 2
+
+function groupAnagrams(strs) {
+    const map = new Map();
+    for (let str of strs) {
+        let count = new Array(26).fill(0);
+        for (let char of str) {
+            let index = char.charCodeAt() - 'a'.charCodeAt();
+            count[index]++;
+        }
+        let key = count.join('');
+        let list = map.get(key) ? map.get(key) : [];
+        list.push(str);
+        map.set(key, list)
+    }
+
+    return Array.from(map.values())
+}
+
+let strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
+console.log(groupAnagrams(strs));

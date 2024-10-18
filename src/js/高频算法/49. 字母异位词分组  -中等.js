@@ -19,6 +19,29 @@
  *
  * 输入: strs = ["a"]
  * 输出: [["a"]]
+ * 
+ * 
+ * 
+ * const myMap = new Map();
+
+    // 添加一些键值对
+    myMap.set('a', 1);
+    myMap.set('b', 2);
+    myMap.set('c', 3);
+
+    // 使用 Map.values()
+    const valuesIterator = myMap.values();
+    // 以上直接打印出来的是个迭代器
+
+    // 遍历迭代器
+    for (const value of valuesIterator) {
+        console.log(value);
+    }
+
+    // 输出:
+    // 1
+    // 2
+    // 3
  */
 
 var groupAnagrams = function (strs) {
