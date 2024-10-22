@@ -1,3 +1,5 @@
+const { is } = require("core-js/core/object");
+
 const compareVersion = (version1, version2) => {
     const v1parts = version1.split('.');
     const v2parts = version2.split('.');
@@ -188,4 +190,65 @@ function groupAnagrams(strs) {
 }
 
 let strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
-console.log(groupAnagrams(strs));
+// console.log(groupAnagrams(strs));
+
+
+function climbStairs(n) {
+    if (n <= 1) {
+        return 1
+    }
+    const dp = new Array(n + 1);
+    dp[0] = 1;
+    dp[1] = 1;
+    for (let i = 2; i < dp.length; i++) {
+        dp[i] = dp[i - 1] + dp[i - 2];
+    }
+    return dp[n]
+}
+
+// 示例使用
+const totalStairs = 5;
+console.log(`爬到第 ${totalStairs} 级台阶的方法总数是：${climbStairs(totalStairs)}`);
+// 输出: 爬到第 5 级台阶的方法总数是：8
+
+
+function deleteDuplicates(head) {
+    let curr = head;
+    while (curr !== null && curr.next !== null) {
+        if (curr.val === curr.next.val) {
+            curr.next = curr.next.next;
+        } else {
+            curr = curr.next;
+        }
+    }
+    return head
+}
+
+function merge(nums1, m, nums2, n) {
+    let p1 = m - 1;
+    let p2 = n - 1;
+    let p = m + n - 1;
+    while (p1 >= 0 && p2 >= 0) {
+        if (nums1[p1] > nums2[p2]) {
+            nums1[p] = nums1[p1];
+            p1--;
+        } else {
+            nums1[p] = nums2[p2];
+            p2--;
+        }
+        p--
+    }
+    while (p2 >= 0) {
+        nums1[p] = nums2[p2];
+        p2--;
+        p--;
+    }
+}
+
+
+function isSameTree(p, q) {
+    if (p === null && q === null) return true;
+    if (p === null || q === null) return false;
+    if (p.val !== q.val) return false;
+    return isSameTree(p.left, q.left) && isSameTree(p.right, q.right)
+}

@@ -41,3 +41,36 @@ const tree1 = new TreeNode(1, new TreeNode(2), new TreeNode(3));
 const tree2 = new TreeNode(1, new TreeNode(2), new TreeNode(3));
 
 console.log(isSameTree(tree1, tree2)); // 输出: true
+
+
+
+
+
+
+
+// 扩展：迭代方法
+function isSameTreeIterative(p, q) {
+    let stack = [[p, q]];
+    
+    while (stack.length > 0) {
+        let [node1, node2] = stack.pop();
+        
+        if (node1 === null && node2 === null) {
+            continue;
+        }
+        
+        if (node1 === null || node2 === null) {
+            return false;
+        }
+        
+        if (node1.val !== node2.val) {
+            return false;
+        }
+        
+        // 先压入右子树，再压入左子树，这样左子树会先被处理
+        stack.push([node1.right, node2.right]);
+        stack.push([node1.left, node2.left]);
+    }
+    
+    return true;
+}
