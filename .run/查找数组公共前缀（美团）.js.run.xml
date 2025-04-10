@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="查找数组公共前缀（美团）.js" type="NodeJSConfigurationType" path-to-node="$USER_HOME$/.nvm/versions/node/v16.17.0/bin/node" nameIsGenerated="true" path-to-js-file="查找数组公共前缀（美团）.js" working-dir="$PROJECT_DIR$/src">
+  <configuration default="false" name="查找数组公共前缀（美团）.js" type="NodeJSConfigurationType" path-to-node="$USER_HOME$/.nvm/versions/node/v16.17.0/bin/node" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/src/js/其他/查找数组公共前缀（美团）.js" working-dir="$PROJECT_DIR$/src">
     <method v="2" />
   </configuration>
 </component>
