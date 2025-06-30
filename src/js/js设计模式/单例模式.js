@@ -23,6 +23,14 @@ const HungrySingleton = (function() {
   };
 })();
 
+const HungrySingleton2 = (() => {
+  const _instance = new FuncClass();
+  return () => _instance;
+})();
+
+
+
+
 // 懒汉式
 const LazySingleton = (function() {
   let _instance = null;
@@ -31,6 +39,13 @@ const LazySingleton = (function() {
     return _instance || (_instance = new FuncClass());
   };
 })();
+
+
+const LazySingleton2 = (() => {
+  let _instance = null;
+  return () => _instance || (_instance = new FuncClass());
+})();
+
 
 const visitor1 = new HungrySingleton();
 const visitor2 = new HungrySingleton();
