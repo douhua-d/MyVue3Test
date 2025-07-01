@@ -17,12 +17,12 @@ class EventEmitter {
   }
 
   once(type, callback) {
-    function fn() {
-      callback();
-      this.off(type, fn);
-    }
+    const onceCallback = (data) => {
+      callback(data);
+      this.off(type, onceCallback);
+    };
 
-    this.on(type, fn);
+    this.on(type, onceCallback);
   }
 
   emit(type, ...args) {
