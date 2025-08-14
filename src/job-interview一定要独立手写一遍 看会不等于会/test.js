@@ -115,8 +115,6 @@ function rotateArr(nums, k) {
   return nums;
 }
 
-// 实现基础版深拷贝 
-
 function emit(type, ...args) {
   if (!this.events[type]) return;
   this.events[type] = this.events[type].filter(item => {

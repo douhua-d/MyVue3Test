@@ -52,8 +52,6 @@ function isEqual(data1, data2) {
   return true;
 }
 
-// 实现一个基础版的对象深拷贝
-
 // 搜索插入位置
 let searchInsert = (nums, target) => {
   let left = 0;
